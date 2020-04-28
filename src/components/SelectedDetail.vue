@@ -1,18 +1,38 @@
 <template>
   <div>
-    <el-table :data="data.chars" border style="width: 100%" max-height="300px">
+    <h2>{{title}}</h2>
+    <el-table :data="data.chars" border style="width: 100%" max-height="300px" class="detail-table">
       <el-table-column prop="word" label="字"></el-table-column>
-      <el-table-column prop="select_times" label="字频"></el-table-column>
-      <el-table-column prop="kind" label="类别"></el-table-column>
-      <el-table-column prop="stock_id" label="库"></el-table-column>
+      <el-table-column label="其他作业中出现">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="detail(scope.row.word)">查看</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="stock_times" label="文章中出现次数"></el-table-column>
+      <el-table-column prop="type" label="类别"></el-table-column>
     </el-table>
-    <el-table :data="data.words" border style="width: 100%" max-height="300px">
+    <el-table :data="data.words" border style="width: 100%" max-height="300px" class="detail-table">
       <el-table-column prop="word" label="词"></el-table-column>
-      <el-table-column prop="select_times" label="词频"></el-table-column>
+      <el-table-column label="其他作业中出现">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="detail2(scope.row.word)">查看</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="stock_times" label="文章中出现次数"></el-table-column>
       <el-table-column prop="is_common" label="是否常用"></el-table-column>
-      <el-table-column prop="stock_id" label="库"></el-table-column>
     </el-table>
     <el-button type="primary" @click="download(title+'.txt')">导出</el-button>
+    <el-drawer title="历史选择情况" :visible.sync="drawer">
+      <div v-for="item in historys" :key="item.select_sheet_id">
+        <div>
+          序号：{{item.select_sheet_id}},
+          标题：{{item.title}},
+          创建时间：{{item.created_at}},
+          学期：{{item.semester}}
+          </div>
+      </div>
+      <div>共计：{{historys.length}}</div>
+    </el-drawer>
   </div>
 </template>
 
@@ -22,22 +42,23 @@ export default {
     return {
       data: {},
       title: '',
-      exportText: ''
+      exportText: '',
+      drawer: false,
+      historys: [],
+      length: 0
     }
   },
   mounted() {
-    // console.log(this.$route.query.id)
     var id = this.$route.query.id
     this.title = this.$route.query.title
-    // console.log(this.title)
-    // this.tmp = id
     var url = '/sheet/getSheet?select_sheet_id=' + id
     this.$http.get(url).then(result => {
-    //   console.log(result.data)
+      //   console.log(result.data)
       this.data = result.data
     })
   },
   methods: {
+    // 生成作业txt文档
     download(filename) {
       this.exportText += '字\n'
       for (var i = 0; i < this.data.chars.length; i++) {
@@ -62,7 +83,34 @@ export default {
       element.click()
 
       document.body.removeChild(element)
+    },
+    detail(word) {
+      this.drawer = true
+      this.historys = []
+      var url = '/sheet/getCharHistory?word=' + word
+      this.$http.get(url).then(result => {
+        //   console.log(result.data)
+        this.historys = result.data.sheets
+      // eslint-disable-next-line handle-callback-err
+      }).catch((err) => {
+        this.drawer = false
+      })
+    },
+    detail2(word) {
+      this.drawer = true
+      this.historys = []
+      var url = '/sheet/getWordHistory?word=' + word
+      this.$http.get(url).then(result => {
+        //   console.log(result.data)
+        this.historys = result.data.sheets
+      })
     }
   }
 }
 </script>
+
+<style lang="less" scoped>
+.detail-table {
+  margin-bottom: 15px;
+}
+</style>

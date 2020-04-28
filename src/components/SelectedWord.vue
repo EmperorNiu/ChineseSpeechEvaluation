@@ -12,26 +12,6 @@
       <el-table-column property="description" label="说明"></el-table-column>
       <el-table-column property="created_at" label="创建时间"></el-table-column>
     </el-table>
-    <!-- <el-collapse
-      accordion
-      @change="handleChange"
-      class="content"
-      v-for="item in sheets"
-      :key="item.select_sheet_id"
-    >
-      <el-collapse-item :name="item.select_sheet_id">
-        <span class="collapse-title" slot="title">
-          {{item.select_sheet_id}}
-          创建时间：
-          {{item.created_at}}
-        </span>
-        <div v-for="x in selectedItems['select'+item.select_sheet_id].chars" :key="x.select_char_id">
-          {{x.word_dict_id}}
-          {{x.select_times}}
-          {{x.stock_id}}
-        </div>
-      </el-collapse-item>
-    </el-collapse>-->
   </div>
 </template>
 

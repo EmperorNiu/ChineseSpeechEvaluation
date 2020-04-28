@@ -18,12 +18,10 @@
             <span>选字</span>
           </div>
           <div style="margin-bottom: 15px;">
-            <el-autocomplete
+            <el-input
               class="inline-input"
               v-model="charContent"
-              :fetch-suggestions="querySearch1"
               placeholder="请输入内容"
-              @select="handleSelect1"
               style="width:100%"
               clearable
             >
@@ -32,8 +30,8 @@
                 <el-option label="中字库" value="2"></el-option>
                 <el-option label="新建库" value="3"></el-option>
               </el-select>
-              <el-button slot="append" @click="addChar">添加</el-button>
-            </el-autocomplete>
+              <el-button slot="append" icon="el-icon-search" @click="querySearchChar"></el-button>
+            </el-input>
           </div>
           <el-table :data="selectchars" border style="width: 100%" max-height="300px">
             <el-table-column prop="word" label="字"></el-table-column>
@@ -46,6 +44,7 @@
                   type="text"
                   size="small"
                 >移除</el-button>
+                <el-button type="text" size="small" @click="detail(scope.row.word)">查看</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -56,7 +55,7 @@
             <span>选词</span>
           </div>
           <div style="margin-bottom: 15px;">
-            <el-autocomplete
+            <el-input
               class="inline-input"
               v-model="wordContent"
               :fetch-suggestions="querySearchWord"
@@ -70,11 +69,11 @@
                 <el-option label="中字库" value="2"></el-option>
                 <el-option label="新建库" value="3"></el-option>
               </el-select>
-              <el-button slot="append" @click="addWord">添加</el-button>
-            </el-autocomplete>
+              <el-button slot="append" @click="querySearchWord" icon="el-icon-search"></el-button>
+            </el-input>
           </div>
           <el-table :data="selectwords" border style="width: 100%" max-height="300px">
-            <el-table-column prop="word" label="字"></el-table-column>
+            <el-table-column prop="word" label="词"></el-table-column>
             <el-table-column prop="frequent" label="字频"></el-table-column>
             <el-table-column prop="is_common" label="是否常用"></el-table-column>
             <el-table-column label="操作">
@@ -84,13 +83,24 @@
                   type="text"
                   size="small"
                 >移除</el-button>
+                <el-button type="text" size="small" @click="detail2(scope.row.word)">查看</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-card>
       </div>
-      <p>注：字type：0:'常用',1:'通用',2:'非通用'</p>
     </el-card>
+    <el-drawer title="历史选择情况" :visible.sync="drawer">
+      <div v-for="item in historys" :key="item.select_sheet_id">
+        <div>
+          序号：{{item.select_sheet_id}},
+          标题：{{item.title}},
+          创建时间：{{item.created_at}},
+          学期：{{item.semester}}
+        </div>
+      </div>
+      <div>共计：{{historys.length}}</div>
+    </el-drawer>
   </div>
 </template>
 
@@ -98,6 +108,7 @@
 export default {
   data() {
     return {
+      semester: 1,
       charContent: '',
       wordContent: '',
       selectchar: null,
@@ -109,73 +120,78 @@ export default {
       timeout: null,
       title: '',
       des: '',
-      iscommon: true
+      iscommon: true,
+      drawer: false,
+      historys: [],
+      length: 0
     }
   },
   methods: {
-    querySearch1(queryString, cb) {
-      var url = '/char/query?char=' + queryString + '&type=' + this.select
-      var r
+    querySearchChar() {
+      var url = '/char/query?char=' + this.charContent + '&type=' + this.select
       this.$http.get(url).then(result => {
         this.selectchar = result.data.result
-        r =
-          result.data.result.word +
-          ' ( 字频: ' +
-          result.data.result.frequent +
-          ' )'
+        // console.log(this.selectchar)
+        this.selectchars.push(result.data.result)
       })
-      // 调用 callback 返回建议列表的数据
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        var list = [{ value: r }]
-        cb(list)
-      }, 1000 * Math.random())
     },
     handleSelect1(item) {
       this.selectword = item.others
-      console.log(item)
+      // console.log(item)
     },
-    // 用户确认添加
-    addChar() {
-      this.selectchars.push(this.selectchar)
-    },
-    querySearchWord(queryString, cb) {
-      if (queryString === '') {
+    querySearchWord() {
+      if (this.wordContent === '') {
         return
       }
-      var url = '/word/query?word=' + queryString
-      var r
-      var list = []
-      var i
+      var url = '/word/query?word=' + this.wordContent + '&type=' + this.select
       this.$http.get(url).then(result => {
-        this.selectword = result.data.result
         var tmp = result.data.result
         console.log(result.data.result)
-        for (i in tmp) {
-          console.log(i)
-          r = tmp[i].word + '(词频:' + tmp[i].frequent + ')'
-          list.push({ value: r, others: tmp[i] })
+        for (var i = 0; i < tmp.length; i++) {
+          this.selectwords.push(tmp[i])
         }
       })
-      // 调用 callback 返回建议列表的数据
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        console.log(list)
-        cb(list)
-      }, 1000 * Math.random())
     },
-    addWord() {
-      this.is_common = this.selectword.is_common
-      if (this.selectword.is_common === true) {
-        this.selectword.is_common = '是'
-      } else {
-        this.selectword.is_common = '否'
-      }
-      this.selectwords.push(this.selectword)
+    charDetail() {
+      console.log('see')
     },
     deleteRow(index, rows) {
       rows.splice(index, 1)
     },
+    detail(word) {
+      this.drawer = true
+      this.historys = []
+      var url = '/sheet/getCharHistory?word=' + word
+      this.$http
+        .get(url)
+        .then(result => {
+          if (result.data.sheets != null) {
+            this.historys = result.data.sheets
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(err => {
+          console.log('err')
+          this.drawer = false
+        })
+    },
+    detail2(word) {
+      this.drawer = true
+      this.historys = []
+      var url = '/sheet/getWordHistory?word=' + word
+      this.$http
+        .get(url)
+        .then(result => {
+          if (result.data.sheets != null) {
+            this.historys = result.data.sheets
+          }
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(err => {
+          this.drawer = false
+        })
+    },
+    // 完成作业字词选择，更新sheet列表
     finishAdd() {
       var url = '/sheet/create'
       var selc = []
@@ -184,27 +200,27 @@ export default {
       for (c in this.selectchars) {
         tmp = {
           word_dict_id: this.selectchars[c].index,
-          select_times: this.selectchars[c].frequent + 1,
+          stock_times: this.selectchars[c].frequent,
           word: this.selectchars[c].word,
           stock_id: parseInt(this.select),
-          kind: this.selectchars[c].type
+          type: this.selectchars[c].type
         }
-        // console.log(tmp)
         selc.push(tmp)
       }
       for (c in this.selectwords) {
         tmp = {
           word_dict_id: this.selectwords[c].index,
-          select_times: this.selectwords[c].frequent + 1,
+          stock_times: this.selectwords[c].frequent,
           word: this.selectwords[c].word,
           stock_id: parseInt(this.select),
-          is_common: this.is_common
+          is_common: this.selectwords[c].is_common
         }
         selw.push(tmp)
       }
       var newHomework = {
         title: this.title,
         description: this.des,
+        semester: this.semester,
         SelectChars: selc,
         SelectWords: selw
       }

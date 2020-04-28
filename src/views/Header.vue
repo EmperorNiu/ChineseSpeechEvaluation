@@ -7,6 +7,7 @@
     text-color="#fff"
     active-text-color="#ffd04b"
     router
+    @select="handleSelect"
   >
     <el-menu-item index="/upload">上传作业</el-menu-item>
     <el-menu-item index="/evaluation">作业评分</el-menu-item>
@@ -17,13 +18,20 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       activeIndex: '/select'
     }
   },
   methods: {
-
+    handleSelect(index) {
+      this.activeIndex = index
+    }
+  },
+  watch: {
+    $route() {
+      this.handleSelect('/selectedword')
+    }
   }
 }
 </script>
