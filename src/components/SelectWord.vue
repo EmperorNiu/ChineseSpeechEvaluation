@@ -35,7 +35,7 @@
           </div>
           <el-table :data="selectchars" border style="width: 100%" max-height="300px">
             <el-table-column prop="word" label="字"></el-table-column>
-            <el-table-column prop="frequent" label="字频"></el-table-column>
+            <el-table-column prop="nf" label="已用"></el-table-column>
             <el-table-column prop="type" label="类别"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
@@ -74,8 +74,8 @@
           </div>
           <el-table :data="selectwords" border style="width: 100%" max-height="300px">
             <el-table-column prop="word" label="词"></el-table-column>
-            <el-table-column prop="frequent" label="字频"></el-table-column>
-            <el-table-column prop="is_common" label="是否常用"></el-table-column>
+            <el-table-column prop="nf" label="已用"></el-table-column>
+            <el-table-column prop="is_common" label="类别"></el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button
@@ -95,8 +95,6 @@
         <div>
           序号：{{item.select_sheet_id}},
           标题：{{item.title}},
-          创建时间：{{item.created_at}},
-          学期：{{item.semester}}
         </div>
       </div>
       <div>共计：{{historys.length}}</div>
@@ -115,6 +113,7 @@ export default {
       selectword: null,
       selectchars: [],
       selectwords: [],
+      wordFrequents: [],
       input2: '',
       select: '1',
       timeout: null,
@@ -130,26 +129,53 @@ export default {
     querySearchChar() {
       var url = '/char/query?char=' + this.charContent + '&type=' + this.select
       this.$http.get(url).then(result => {
-        this.selectchar = result.data.result
-        // console.log(this.selectchar)
-        this.selectchars.push(result.data.result)
+        var tmp = result.data.result
+        url = '/sheet/getCharHistory?word=' + tmp.word
+        this.$http.get(url).then(result => {
+          if (result.data.sheets != null) {
+            tmp.nf = result.data.sheets.length
+          } else {
+            tmp.nf = 0
+          }
+          this.selectchars.push(tmp)
+        })
+        console.log(this.selectchars)
       })
     },
     handleSelect1(item) {
       this.selectword = item.others
       // console.log(item)
     },
-    querySearchWord() {
+    async querySearchWord() {
       if (this.wordContent === '') {
         return
       }
       var url = '/word/query?word=' + this.wordContent + '&type=' + this.select
-      this.$http.get(url).then(result => {
+      await this.$http.get(url).then(result => {
         var tmp = result.data.result
-        console.log(result.data.result)
-        for (var i = 0; i < tmp.length; i++) {
-          this.selectwords.push(tmp[i])
+        console.log(tmp.length)
+        var i
+        for (i = 0; i < tmp.length; i++) {
+          console.log(i)
+          var t = tmp[i]
+          if (t.is_common === '是') {
+            t.is_common = '常用'
+          }
+          this.tmpFun(t)
         }
+      })
+    },
+    tmpFun(t) {
+      var url = '/sheet/getWordHistory?word=' + t.word
+      this.$http.get(url).then(result => {
+        console.log(t)
+        if (result.data.sheets != null) {
+          t.nf = result.data.sheets.length
+        } else {
+          t.nf = 0
+        }
+
+        this.selectwords.push(t)
       })
     },
     charDetail() {
@@ -159,6 +185,7 @@ export default {
       rows.splice(index, 1)
     },
     detail(word) {
+      // console.log(word)
       this.drawer = true
       this.historys = []
       var url = '/sheet/getCharHistory?word=' + word

@@ -25,10 +25,7 @@
     <el-drawer title="历史选择情况" :visible.sync="drawer">
       <div v-for="item in historys" :key="item.select_sheet_id">
         <div>
-          序号：{{item.select_sheet_id}},
-          标题：{{item.title}},
-          创建时间：{{item.created_at}},
-          学期：{{item.semester}}
+          标题：{{item.title}}
           </div>
       </div>
       <div>共计：{{historys.length}}</div>
