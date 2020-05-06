@@ -5,7 +5,8 @@ import {
   Container, Header, Main, Aside,
   Breadcrumb, BreadcrumbItem, Card, Drawer,
   Tabs, TabPane, Upload, Select, Option, Collapse, CollapseItem,
-  Autocomplete, Table, TableColumn
+  Autocomplete, Table, TableColumn, Popover, Checkbox, CheckboxGroup,
+  Row, Col, Slider, Steps, Step
 } from 'element-ui'
 
 Vue.use(Button)
@@ -34,4 +35,12 @@ Vue.use(CollapseItem)
 Vue.use(Autocomplete)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Popover)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Slider)
+Vue.use(Steps)
+Vue.use(Step)
 Vue.prototype.$message = Message
