@@ -2,6 +2,7 @@
   <div>
     <el-tabs type="border-card">
       <el-tab-pane label="字词训练" class="inner-card">
+        <aplayer autoplay float :music="music1" />
         <el-row>
           <el-col :span="12">
             <div class="word-group" v-for="item in dataCol1" :key="item.index">
@@ -67,7 +68,7 @@
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
                       <el-checkbox-group
-                        v-model="item.checkedErrors2"
+                        v-model="item.checkedErrors2[index]"
                         @change="handleCheckedChange"
                       >
                         <el-checkbox
@@ -84,7 +85,7 @@
                 </div>
                 <div class="hasChosen">
                   <div
-                    v-for="err in item.checkedErrors2"
+                    v-for="err in item.checkedErrors2[index]"
                     :key="err"
                     class="hasChosenItem"
                   >{{err.label}}</div>
@@ -144,7 +145,7 @@
                 </div>
                 <div class="hasChosen">
                   <div
-                    v-for="err in item.checkedErrors1"
+                    v-for="err in item.checkedErrors1[index]"
                     :key="err"
                     class="hasChosenItem"
                   >{{err.label}}</div>
@@ -155,7 +156,7 @@
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
                       <el-checkbox-group
-                        v-model="item.checkedErrors2"
+                        v-model="item.checkedErrors2[index]"
                         @change="handleCheckedChange"
                       >
                         <el-checkbox
@@ -172,7 +173,7 @@
                 </div>
                 <div class="hasChosen">
                   <div
-                    v-for="err in item.checkedErrors2"
+                    v-for="err in item.checkedErrors2[index]"
                     :key="err"
                     class="hasChosenItem"
                   >{{err.label}}</div>
@@ -183,6 +184,7 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="文章朗读" class="inner-card">
+        <aplayer autoplay float :music="music2" />
         <strong>原文</strong>
         <p>{{article}}</p>
         <div class="block">
@@ -203,13 +205,14 @@
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4}"
             placeholder="请输入内容"
-            v-model="textarea2"
+            v-model="comment"
             style="margin-top:5px;"
           ></el-input>
         </div>
         <div class="finish">
-          <el-button type="info" round @click="info">重新批改</el-button>
+          <el-button type="info" round @click="again">重新批改</el-button>
           <el-button type="primary" round @click="finish">完成批改</el-button>
+          <el-link type="success" :href="r" class="download">生成报告</el-link>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -217,9 +220,14 @@
 </template>
 
 <script>
+import Aplayer from 'vue-aplayer'
 export default {
+  components: {
+    Aplayer
+  },
   data() {
     return {
+      r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
       dataCol1: [],
       dataCol2: [],
       article:
@@ -232,14 +240,6 @@ export default {
       value2: 0,
       value3: 0,
       errType: [
-        {
-          label: 'A',
-          name: '错读'
-        },
-        {
-          label: 'B',
-          name: '漏读'
-        },
         {
           label: 'C',
           name: '声母缺陷'
@@ -263,18 +263,31 @@ export default {
         {
           label: 'H',
           name: '轻音错误'
+        },
+        {
+          label: 'A',
+          name: '错读'
+        },
+        {
+          label: 'B',
+          name: '漏读'
         }
       ],
       checked3: false,
       checked4: true,
       doc_id: '',
-      stu_id: ''
+      stu_id: '',
+      comment: '',
+      music1: {},
+      music2: {}
     }
   },
   mounted() {
     this.doc_id = this.$route.query.homework_doc_id
     this.stu_id = this.$route.query.student_id
     this.getWordExercise()
+    this.getArticle()
+    this.getAudios()
   },
   methods: {
     handleCheckedChange(val) {
@@ -315,15 +328,139 @@ export default {
         }
       })
     },
+    async getArticle() {
+      var url = '/homework/getArticle?id=' + this.doc_id
+      await this.$http.get(url).then(result => {
+        this.article = result.data.result.content
+      })
+    },
+    async getAudios() {
+      console.log(123)
+      var url =
+        '/student/getAudios?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id
+      await this.$http.get(url).then(result => {
+        var audiosPos = result.data.students_homework
+        console.log(audiosPos)
+        for (var i = 0; i < audiosPos.length; i++) {
+          if (audiosPos[i].type === '1') {
+            this.music1 = {
+              title: '字词训练',
+              url:
+                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                audiosPos[i].audio,
+              lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
+            }
+          } else {
+            this.music2 = {
+              title: '课文朗读',
+              url:
+                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                audiosPos[i].audio,
+              lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
+            }
+          }
+          // console.log(this.music1)
+          // console.log(this.music2)
+        }
+      })
+    },
     finish() {
-      var url = '/student/insertError'
+      var url = '/student/homworkresult'
       var wordErr = this.dataCol1.concat(this.dataCol2)
-      var data = {
-        wordErr: wordErr,
-        student_id: this.stu_id,
-        homework_doc_id_refer: this.doc_id
+      var data = []
+      var j = 0
+      var k = 0
+      // console.log(wordErr[1].checkedErrors0)
+      for (var i = 0; i < wordErr.length; i++) {
+        // console.log(wordErr[i])
+        var errs = []
+        for (j = 0; j < wordErr[i].checkedErrors0.length; j++) {
+          errs.push(wordErr[i].checkedErrors0[j].label)
+        }
+        var w1 = {
+          word: wordErr[i].character,
+          studend_id_refer: this.stu_id,
+          error_types: errs.join(',')
+        }
+        data.push(w1)
+        for (j = 0; j < wordErr[i].word1Split.length; j++) {
+          errs = []
+          for (k = 0; k < wordErr[i].checkedErrors1[j].length; k++) {
+            errs.push(wordErr[i].checkedErrors1[j][k].label)
+          }
+          w1 = {
+            word: wordErr[i].word1Split[j],
+            studend_id_refer: this.stu_id,
+            error_types: errs.join(',')
+          }
+          data.push(w1)
+        }
+        for (j = 0; j < wordErr[i].word2Split.length; j++) {
+          errs = []
+          for (k = 0; k < wordErr[i].checkedErrors2[j].length; k++) {
+            errs.push(wordErr[i].checkedErrors2[j][k].label)
+          }
+          w1 = {
+            word: wordErr[i].word2Split[j],
+            studend_id_refer: this.stu_id,
+            error_types: errs.join(',')
+          }
+          data.push(w1)
+        }
       }
-      this.$http.post(url, data).then(result => {})
+      console.log(data)
+      var pushData = {
+        student_id_refer: this.stu_id,
+        homework_doc_id_refer: parseInt(this.doc_id),
+        tone_accuracy: this.value1,
+        intonation_accuracy: this.value2,
+        fluency: this.value3,
+        word_errors: data,
+        comment: this.comment
+      }
+      this.$http.post(url, pushData).then(result => {})
+      this.$message({
+        message: '批改提交成功',
+        type: 'success'
+      })
+      this.r =
+        'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+        this.stu_id +
+        '&doc_id=' +
+        this.doc_id
+    },
+    report() {
+      var url =
+        '/homework/getReport?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id
+      this.$http.get(url)
+    },
+    again() {
+      this.value1 = 0
+      this.value2 = 0
+      this.value3 = 0
+      this.comment = ''
+      for (var i = 0; i < this.dataCol1.length; i++) {
+        this.dataCol1[i].checkedErrors0 = []
+        this.dataCol1[i].checkedErrors1 = []
+        for (var j = 0; j < this.dataCol1[i].checkedErrors1.length; j++) {
+          this.dataCol1[i].checkedErrors1[j] = []
+        }
+        this.dataCol1[i].checkedErrors2 = []
+        for (j = 0; j < this.dataCol1[i].checkedErrors2.length; j++) {
+          this.dataCol1[i].checkedErrors2[j] = []
+        }
+      }
+      for (i = 0; i < this.dataCol2.length; i++) {
+        this.dataCol2[i].checkedErrors0 = []
+        this.dataCol2[i].checkedErrors1 = []
+        for (j = 0; j < this.dataCol2[i].checkedErrors1.length; j++) {
+          this.dataCol2[i].checkedErrors1[j] = []
+        }
+        this.dataCol2[i].checkedErrors2 = []
+        for (j = 0; j < this.dataCol1[i].checkedErrors2.length; j++) {
+          this.dataCol2[i].checkedErrors2[j] = []
+        }
+      }
     }
   }
 }
@@ -384,6 +521,9 @@ export default {
   display: flex;
   flex-direction: row;
   margin-top: 25px;
-  margin-left: 85%;
+  margin-left: 75%;
+}
+.download {
+  margin-left: 10px;
 }
 </style>

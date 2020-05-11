@@ -1,7 +1,19 @@
 <template>
   <el-container class="frame">
     <el-header>
-      <myheader class="myheader"></myheader>
+      <el-menu
+        :default-active="activeIndex"
+        class="header-menu"
+        mode="horizontal"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        router
+        @select="handleSelect"
+      >
+        <el-menu-item index="/select">教师选词</el-menu-item>
+        <el-menu-item index="/selectedword">已选字词</el-menu-item>
+      </el-menu>
     </el-header>
     <el-container class="main-frame">
       <el-aside :width="isCollapse ? '50px' : '200px'">
@@ -15,21 +27,25 @@
 </template>
 
 <script>
-import header from './Header.vue'
 export default {
-  data () {
+  data() {
     return {
       isCollapse: true
     }
   },
   methods: {
     // 点击按钮，切换菜单的折叠与展开
-    toggleCollapse () {
+    toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    handleSelect(index) {
+      this.activeIndex = index
     }
   },
-  components: {
-    myheader: header
+  watch: {
+    $route() {
+      this.handleSelect('/selectedword')
+    }
   }
 }
 </script>
@@ -43,12 +59,12 @@ export default {
 }
 .el-header {
   background-color: #545c64;
-  // display: flex;
-  // padding-left: 15%;
-  // justify-content: space-between;
-  // align-items: center;
-  // color: white;
-  // font-size: 18px;
+  display: flex;
+  padding-left: 15%;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 18px;
 }
 .myheader {
   width: 100%;
@@ -70,5 +86,8 @@ export default {
   text-align: center;
   letter-spacing: 0.2em;
   cursor: pointer;
+}
+.title{
+  color: whitesmoke;
 }
 </style>

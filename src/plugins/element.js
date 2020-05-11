@@ -6,7 +6,7 @@ import {
   Breadcrumb, BreadcrumbItem, Card, Drawer,
   Tabs, TabPane, Upload, Select, Option, Collapse, CollapseItem,
   Autocomplete, Table, TableColumn, Popover, Checkbox, CheckboxGroup,
-  Row, Col, Slider, Steps, Step
+  Row, Col, Slider, Steps, Step, Link
 } from 'element-ui'
 
 Vue.use(Button)
@@ -43,4 +43,5 @@ Vue.use(Col)
 Vue.use(Slider)
 Vue.use(Steps)
 Vue.use(Step)
+Vue.use(Link)
 Vue.prototype.$message = Message

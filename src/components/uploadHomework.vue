@@ -17,7 +17,7 @@
             <el-upload
               class="upload-part"
               ref="upload1"
-              action="http://localhost:8001/api/homework/upload/doc"
+              action="http://47.103.83.192:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
@@ -53,16 +53,33 @@
             </el-select>
           </div>
           <div class="upload-audio-student">
+            <div class="upload-doc-input-text">选择老师：</div>
+            <el-select
+              v-model="selectTeacher"
+              placeholder="请选择"
+              class="upload-audio-student-select"
+              @change="getStudentByTeacher"
+            >
+              <el-option
+                v-for="item in teachers"
+                :key="item.teacher_id"
+                :label="item.name"
+                :value="item.name"
+              ></el-option>
+            </el-select>
+          </div>
+          <div class="upload-audio-student">
             <div class="upload-doc-input-text">选择学生：</div>
             <el-select
               v-model="selectStudent"
               placeholder="请选择"
               class="upload-audio-student-select"
+              @change="dubug"
             >
               <el-option
                 v-for="item in studentList"
                 :key="item.student_id"
-                :label="item.name"
+                :label="item.student_id"
                 :value="item.student_id"
               ></el-option>
             </el-select>
@@ -72,7 +89,7 @@
             <el-upload
               class="audio-upload"
               ref="upload2"
-              action="http://localhost:8001/api/student/upload/audio"
+              action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
@@ -91,7 +108,7 @@
             <el-upload
               class="audio-upload"
               ref="upload3"
-              action="http://localhost:8001/api/student/upload/audio"
+              action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
@@ -106,7 +123,7 @@
             </el-upload>
           </div>
           <el-button class="next" size="small" type="primary" @click="nextAddAudio">下一个</el-button>
-          <el-button class="next" size="small" type="warning">开始打分</el-button>
+          <el-button class="next" size="small" type="warning" @click="pushScore">开始打分</el-button>
         </div>
       </el-tab-pane>
       <el-tab-pane label="作业打分" name="3">
@@ -122,12 +139,33 @@
           </el-select>
         </div>
         <div class="upload-audio-student">
+          <div class="upload-doc-input-text">选择老师：</div>
+          <el-select
+            v-model="selectTeacher"
+            placeholder="请选择"
+            class="upload-audio-student-select"
+            @change="getStudentByTeacher"
+          >
+            <el-option
+              v-for="item in teachers"
+              :key="item.teacher_id"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
+        </div>
+        <div class="upload-audio-student">
           <div class="upload-doc-input-text">选择学生：</div>
-          <el-select v-model="selectStudent" placeholder="请选择" class="upload-audio-student-select">
+          <el-select
+            v-model="selectStudent"
+            placeholder="请选择"
+            class="upload-audio-student-select"
+            @change="dubug"
+          >
             <el-option
               v-for="item in studentList"
               :key="item.student_id"
-              :label="item.name"
+              :label="item.student_id"
               :value="item.student_id"
             ></el-option>
           </el-select>
@@ -145,6 +183,7 @@
 <script>
 export default {
   mounted() {
+    this.getTeachers()
     this.getDocs()
     this.getStudents()
   },
@@ -152,7 +191,9 @@ export default {
     return {
       title: '',
       describe: '',
+      teachers: [],
       selectHomework: '',
+      selectTeacher: '',
       selectStudent: '',
       homeworkDocId: '',
       uploadData: {
@@ -179,12 +220,18 @@ export default {
   methods: {
     submitUpload() {
       this.$refs.upload1.submit()
+      this.getStudents()
+      this.getDocs()
     },
     submitUpload2() {
       this.$refs.upload2.submit()
+      this.getStudents()
+      this.getDocs()
     },
     submitUpload3() {
       this.$refs.upload3.submit()
+      this.getStudents()
+      this.getDocs()
     },
     successUpload(res, file, files) {
       this.$refs.upload1.clearFiles()
@@ -211,6 +258,19 @@ export default {
         this.studentList = result.data.students
       })
     },
+    getTeachers() {
+      var url = '/student/getTeachers'
+      this.$http.get(url).then(result => {
+        this.teachers = result.data.teachers
+      })
+    },
+    getStudentByTeacher(t) {
+      var url = '/student/getStudentByTeacher?teacher=' + this.selectTeacher
+      this.$http.get(url).then(result => {
+        this.studentList = result.data.students
+        console.log(this.studentList)
+      })
+    },
     nextAddAudio() {
       this.$refs.upload2.clearFiles()
       this.$refs.upload3.clearFiles()
@@ -220,8 +280,14 @@ export default {
     pushScore() {
       this.$router.push({
         path: '/evaluation',
-        query: { homework_doc_id: this.selectHomework, student_id: this.selectStudent }
+        query: {
+          homework_doc_id: this.selectHomework,
+          student_id: this.selectStudent
+        }
       })
+    },
+    debug() {
+      console.log(this.selectStudent)
     }
   }
 }

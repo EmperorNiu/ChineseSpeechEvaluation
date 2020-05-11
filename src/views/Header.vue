@@ -1,5 +1,5 @@
 <template>
-  <el-menu
+  <!-- <el-menu
     :default-active="activeIndex"
     class="header-menu"
     mode="horizontal"
@@ -10,10 +10,14 @@
     @select="handleSelect"
   >
     <el-menu-item index="/upload">作业评分</el-menu-item>
-    <!-- <el-menu-item index="/evaluation">作业评分</el-menu-item> -->
     <el-menu-item index="/select">教师选词</el-menu-item>
     <el-menu-item index="/selectedword">已选字词</el-menu-item>
-  </el-menu>
+  </el-menu>-->
+  <div>
+    <div class="title">
+      <p>测试版v0.2发布</p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -37,4 +41,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.title{
+  color: whitesmoke;
+}
 </style>
