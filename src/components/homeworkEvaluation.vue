@@ -2,18 +2,15 @@
   <div>
     <el-tabs type="border-card">
       <el-tab-pane label="字词训练" class="inner-card">
-        <aplayer autoplay float :music="music1" />
-        <el-row>
+        <aplayer float :music="music1" class="audio-player" />
+        <el-row style="margin-top:60px;">
           <el-col :span="12">
-            <div class="word-group" v-for="item in dataCol1" :key="item.index">
+            <div class="word-group" v-for="item in dataCol1" :key="item.exercise_id">
               <div class="char-contain">
                 <div class="char">
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
-                      <el-checkbox-group
-                        v-model="item.checkedErrors0"
-                        @change="handleCheckedChange"
-                      >
+                      <el-checkbox-group v-model="item.checkedErrors0">
                         <el-checkbox
                           v-for="err in errType"
                           :key="err.label"
@@ -39,10 +36,7 @@
                 <div class="word">
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
-                      <el-checkbox-group
-                        v-model="item.checkedErrors1[index]"
-                        @change="handleCheckedChange"
-                      >
+                      <el-checkbox-group v-model="item.checkedErrors1[index]">
                         <el-checkbox
                           v-for="err in errType"
                           :key="err.label"
@@ -67,10 +61,7 @@
                 <div class="word">
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
-                      <el-checkbox-group
-                        v-model="item.checkedErrors2[index]"
-                        @change="handleCheckedChange"
-                      >
+                      <el-checkbox-group v-model="item.checkedErrors2[index]">
                         <el-checkbox
                           v-for="err in errType"
                           :key="err.label"
@@ -94,15 +85,12 @@
             </div>
           </el-col>
           <el-col :span="12">
-            <div class="word-group" v-for="item in dataCol2" :key="item.index">
+            <div class="word-group" v-for="item in dataCol2" :key="item.exercise_id">
               <div class="char-contain">
                 <div class="char">
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
-                      <el-checkbox-group
-                        v-model="item.checkedErrors0"
-                        @change="handleCheckedChange"
-                      >
+                      <el-checkbox-group v-model="item.checkedErrors0">
                         <el-checkbox
                           v-for="err in errType"
                           :key="err.label"
@@ -127,10 +115,7 @@
                 <div class="word">
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
-                      <el-checkbox-group
-                        v-model="item.checkedErrors1[index]"
-                        @change="handleCheckedChange"
-                      >
+                      <el-checkbox-group v-model="item.checkedErrors1[index]">
                         <el-checkbox
                           v-for="err in errType"
                           :key="err.label"
@@ -155,10 +140,7 @@
                 <div class="word">
                   <el-popover placement="right" width="150" trigger="click">
                     <div class="popover">
-                      <el-checkbox-group
-                        v-model="item.checkedErrors2[index]"
-                        @change="handleCheckedChange"
-                      >
+                      <el-checkbox-group v-model="item.checkedErrors2[index]">
                         <el-checkbox
                           v-for="err in errType"
                           :key="err.label"
@@ -184,7 +166,7 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane label="文章朗读" class="inner-card">
-        <aplayer autoplay float :music="music2" />
+        <aplayer float :music="music2" />
         <strong>原文</strong>
         <p>{{article}}</p>
         <div class="block">
@@ -227,15 +209,11 @@ export default {
   },
   data() {
     return {
-      r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      // r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
       dataCol1: [],
       dataCol2: [],
-      article:
-        // eslint-disable-next-line no-multi-str
-        '森林涵养水源，保持水土，防止水旱灾害的作用非常大。据专家测算，一片十万亩面积的森林，相当于一个两百万立方米的水库，这正如农谚所说的：“山上多栽树，等于修水库。雨多它能吞，雨少它能吐。”\
-说起森林的功劳，那还多得很。它除了为人类提供木材及许多种生产、生活的原料之外，在维护生态环境方面也是功劳卓著。它用另一种“能吞能吐”的特殊功能孕育了人类。因为地球在形成之初，大气中的二氧化碳含量很高，氧气很少，气温也高，生物是难以生存的。大约在四亿年之前，陆地才产生了森林。森林慢慢将大气中的二氧化碳吸收，同时吐出新鲜氧气，调节气温：这才具备了人类生存的条件，地球上才最终有了人类。\
-森林，是地球生态系统的主体，是大自然的总调度室，是地球的绿色之肺。森林维护地球生态环境的这种“能吞能吐”的特殊功能是其他任何物体都不能取代的。然而，由于地球上的燃烧物增多，二氧化碳的排放量急剧增加，使得地球生态环境急剧恶化，主要表现为全球气候变暖，水分蒸发加快，改变了气流的循环，使气候变化加剧，从而引发热浪、飓风、暴雨、洪涝及干旱。\
-为了使地球的这个“能吞能吐”的绿色之肺恢复健壮，以改善生态环境，抑制全球变暖，减少水旱等自然灾害，我们应该大力造林、护林，使每一座荒山都绿起来。',
+      article: '',
       value1: 0,
       value2: 0,
       value3: 0,
@@ -290,9 +268,6 @@ export default {
     this.getAudios()
   },
   methods: {
-    handleCheckedChange(val) {
-      console.log(this.checkedErrors)
-    },
     async getWordExercise() {
       var url = '/homework/getWordExercise?id=' + this.doc_id
       await this.$http.get(url).then(result => {
@@ -346,16 +321,22 @@ export default {
             this.music1 = {
               title: '字词训练',
               url:
-                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                'http://localhost:8001/api/resource/audio?pos=' +
                 audiosPos[i].audio,
+              // url:
+              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           } else {
             this.music2 = {
               title: '课文朗读',
               url:
-                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                'http://localhost:8001/api/resource/audio?pos=' +
                 audiosPos[i].audio,
+              // url:
+              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           }
@@ -424,10 +405,15 @@ export default {
         type: 'success'
       })
       this.r =
-        'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+        'http://localhost:8001/api/homework/getReport?stu_id=' +
         this.stu_id +
         '&doc_id=' +
         this.doc_id
+      // this.r =
+      //   'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+      //   this.stu_id +
+      //   '&doc_id=' +
+      //   this.doc_id
     },
     report() {
       var url =
@@ -525,5 +511,10 @@ export default {
 }
 .download {
   margin-left: 10px;
+}
+.audio-player {
+  position: fixed;
+  width: 80%;
+  top: 120px;
 }
 </style>

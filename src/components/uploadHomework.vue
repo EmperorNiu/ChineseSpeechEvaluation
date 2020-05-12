@@ -17,11 +17,19 @@
             <el-upload
               class="upload-part"
               ref="upload1"
-              action="http://47.103.83.192:8001/api/homework/upload/doc"
+              action="http://localhost:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
             >
+            <!-- <el-upload
+              class="upload-part"
+              ref="upload1"
+              action="http://47.103.83.192:8001/api/homework/upload/doc"
+              :data="{title:title,describe:describe}"
+              :auto-upload="false"
+              :on-success="successUpload"
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -89,11 +97,19 @@
             <el-upload
               class="audio-upload"
               ref="upload2"
-              action="http://47.103.83.192:8001/api/student/upload/audio"
+              action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
             >
+            <!-- <el-upload
+              class="audio-upload"
+              ref="upload2"
+              action="http://47.103.83.192:8001/api/student/upload/audio"
+              :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
+              :auto-upload="false"
+              :on-success="successUpload"
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -108,11 +124,19 @@
             <el-upload
               class="audio-upload"
               ref="upload3"
-              action="http://47.103.83.192:8001/api/student/upload/audio"
+              action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
             >
+            <!-- <el-upload
+              class="audio-upload"
+              ref="upload3"
+              action="http://47.103.83.192:8001/api/student/upload/audio"
+              :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
+              :auto-upload="false"
+              :on-success="successUpload"
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -220,24 +244,19 @@ export default {
   methods: {
     submitUpload() {
       this.$refs.upload1.submit()
-      this.getStudents()
-      this.getDocs()
     },
     submitUpload2() {
       this.$refs.upload2.submit()
-      this.getStudents()
-      this.getDocs()
     },
     submitUpload3() {
       this.$refs.upload3.submit()
-      this.getStudents()
-      this.getDocs()
     },
     successUpload(res, file, files) {
       this.$refs.upload1.clearFiles()
       this.title = ''
       this.describe = ''
       this.homeworkDocId = res.homework_id
+      this.getDocs()
       this.$message({
         message: '上传成功',
         type: 'success'
