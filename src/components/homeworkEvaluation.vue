@@ -3,88 +3,91 @@
     <el-tabs type="border-card">
       <el-tab-pane label="字词训练" class="inner-card">
         <aplayer float :music="music1" class="audio-player" />
-        <el-row style="margin-top:60px;">
-          <el-col :span="12">
-            <div class="word-group" v-for="item in dataCol1" :key="item.exercise_id">
-              <div class="char-contain">
-                <div class="char">
-                  <el-popover placement="right" width="150" trigger="click">
-                    <div class="popover">
-                      <el-checkbox-group v-model="item.checkedErrors0">
-                        <el-checkbox
-                          v-for="err in errType"
-                          :key="err.label"
-                          class="cb"
-                          :label="err"
-                          size="medium"
-                        >{{err.name}}</el-checkbox>
-                      </el-checkbox-group>
-                    </div>
-                    <el-button slot="reference">{{item.character}}</el-button>
-                  </el-popover>
-                </div>
-                <div class="hasChosen">
-                  <div
-                    v-for="err in item.checkedErrors0"
-                    :key="err"
-                    class="hasChosenItem"
-                  >{{err.label}}</div>
-                </div>
+        <div class="container" style="margin-top:60px;">
+          <div class="word-group" v-for="item in dataInPage[currentPage-1]" :key="item.exercise_id">
+            <div class="char-contain">
+              <div class="char">
+                <el-popover placement="right" width="150" trigger="click">
+                  <div class="popover">
+                    <el-checkbox-group v-model="item.checkedErrors0">
+                      <el-checkbox
+                        v-for="err in errType"
+                        :key="err.label"
+                        class="cb"
+                        :label="err"
+                        size="medium"
+                      >{{err.name}}</el-checkbox>
+                    </el-checkbox-group>
+                  </div>
+                  <el-button slot="reference">{{item.character}}</el-button>
+                </el-popover>
               </div>
-              <!-- <div class="word-char-contain"></div> -->
-              <div class="word-char" v-for="(citem,index) in item.word1Split" :key="index">
-                <div class="word">
-                  <el-popover placement="right" width="150" trigger="click">
-                    <div class="popover">
-                      <el-checkbox-group v-model="item.checkedErrors1[index]">
-                        <el-checkbox
-                          v-for="err in errType"
-                          :key="err.label"
-                          class="cb"
-                          :label="err"
-                          size="medium"
-                        >{{err.name}}</el-checkbox>
-                      </el-checkbox-group>
-                    </div>
-                    <el-button slot="reference" size="small">{{citem}}</el-button>
-                  </el-popover>
-                </div>
-                <div class="hasChosen">
-                  <div
-                    v-for="err in item.checkedErrors1[index]"
-                    :key="err"
-                    class="hasChosenItem"
-                  >{{err.label}},</div>
-                </div>
-              </div>
-              <div class="word-char" v-for="(citem,index) in item.word2Split" :key="index">
-                <div class="word">
-                  <el-popover placement="right" width="150" trigger="click">
-                    <div class="popover">
-                      <el-checkbox-group v-model="item.checkedErrors2[index]">
-                        <el-checkbox
-                          v-for="err in errType"
-                          :key="err.label"
-                          class="cb"
-                          :label="err"
-                          size="medium"
-                        >{{err.name}}</el-checkbox>
-                      </el-checkbox-group>
-                    </div>
-                    <el-button slot="reference" size="small">{{citem}}</el-button>
-                  </el-popover>
-                </div>
-                <div class="hasChosen">
-                  <div
-                    v-for="err in item.checkedErrors2[index]"
-                    :key="err"
-                    class="hasChosenItem"
-                  >{{err.label}}</div>
-                </div>
+              <div class="hasChosen">
+                <div
+                  v-for="err in item.checkedErrors0"
+                  :key="err"
+                  class="hasChosenItem"
+                >{{err.label}}</div>
               </div>
             </div>
-          </el-col>
-          <el-col :span="12">
+            <!-- <div class="word-char-contain"></div> -->
+            <div class="word-char" v-for="(citem,index) in item.word1Split" :key="index">
+              <div class="word">
+                <el-popover placement="right" width="150" trigger="click">
+                  <div class="popover">
+                    <el-checkbox-group v-model="item.checkedErrors1[index]">
+                      <el-checkbox
+                        v-for="err in errType"
+                        :key="err.label"
+                        class="cb"
+                        :label="err"
+                        size="medium"
+                      >{{err.name}}</el-checkbox>
+                    </el-checkbox-group>
+                  </div>
+                  <el-button slot="reference" size="small">{{citem}}</el-button>
+                </el-popover>
+              </div>
+              <div class="hasChosen">
+                <div
+                  v-for="err in item.checkedErrors1[index]"
+                  :key="err"
+                  class="hasChosenItem"
+                >{{err.label}},</div>
+              </div>
+            </div>
+            <div class="word-char" v-for="(citem,index) in item.word2Split" :key="index">
+              <div class="word">
+                <el-popover placement="right" width="150" trigger="click">
+                  <div class="popover">
+                    <el-checkbox-group v-model="item.checkedErrors2[index]">
+                      <el-checkbox
+                        v-for="err in errType"
+                        :key="err.label"
+                        class="cb"
+                        :label="err"
+                        size="medium"
+                      >{{err.name}}</el-checkbox>
+                    </el-checkbox-group>
+                  </div>
+                  <el-button slot="reference" size="small">{{citem}}</el-button>
+                </el-popover>
+              </div>
+              <div class="hasChosen">
+                <div
+                  v-for="err in item.checkedErrors2[index]"
+                  :key="err"
+                  class="hasChosenItem"
+                >{{err.label}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <el-row> -->
+        <!-- <el-col :span="12"> -->
+
+        <!-- </el-col> -->
+        <!-- <el-col :span="12">
             <div class="word-group" v-for="item in dataCol2" :key="item.exercise_id">
               <div class="char-contain">
                 <div class="char">
@@ -162,8 +165,15 @@
                 </div>
               </div>
             </div>
-          </el-col>
-        </el-row>
+        </el-col>-->
+        <!-- </el-row> -->
+        <el-pagination
+          layout="prev, pager, next"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="dataCol1.length"
+          @current-change="handleCurrentChange"
+        ></el-pagination>
       </el-tab-pane>
       <el-tab-pane label="文章朗读" class="inner-card">
         <aplayer float :music="music2" />
@@ -257,7 +267,11 @@ export default {
       stu_id: '',
       comment: '',
       music1: {},
-      music2: {}
+      music2: {},
+      currentPage: 1,
+      pageSize: 0,
+      dataInPage: [],
+      finishFlag: 0
     }
   },
   mounted() {
@@ -273,34 +287,25 @@ export default {
       await this.$http.get(url).then(result => {
         var tmp = result.data.result
         for (var i = 0; i < tmp.length; i++) {
-          if (i % 2 === 0) {
-            tmp[i].checkedErrors0 = []
-            tmp[i].checkedErrors1 = []
-            tmp[i].word1Split = tmp[i].word1.split('')
-            for (var j = 0; j < tmp[i].word1Split.length; j++) {
-              tmp[i].checkedErrors1.push([])
-            }
-            tmp[i].checkedErrors2 = []
-            tmp[i].word2Split = tmp[i].word2.split('')
-            for (j = 0; j < tmp[i].word2Split.length; j++) {
-              tmp[i].checkedErrors2.push([])
-            }
-            this.dataCol1.push(tmp[i])
-          } else {
-            tmp[i].checkedErrors0 = []
-            tmp[i].checkedErrors1 = []
-            tmp[i].word1Split = tmp[i].word1.split('')
-            for (j = 0; j < tmp[i].word1Split.length; j++) {
-              tmp[i].checkedErrors1.push([])
-            }
-            tmp[i].checkedErrors2 = []
-            tmp[i].word2Split = tmp[i].word2.split('')
-            for (j = 0; j < tmp[i].word2Split.length; j++) {
-              tmp[i].checkedErrors2.push([])
-            }
-            this.dataCol2.push(tmp[i])
+          tmp[i].checkedErrors0 = []
+          tmp[i].checkedErrors1 = []
+          tmp[i].word1Split = tmp[i].word1.split('')
+          for (var j = 0; j < tmp[i].word1Split.length; j++) {
+            tmp[i].checkedErrors1.push([])
           }
+          tmp[i].checkedErrors2 = []
+          tmp[i].word2Split = tmp[i].word2.split('')
+          for (j = 0; j < tmp[i].word2Split.length; j++) {
+            tmp[i].checkedErrors2.push([])
+          }
+          this.dataCol1.push(tmp[i])
         }
+        this.pageSize = Math.ceil(this.dataCol1.length / 4)
+        var p1 = this.dataCol1.slice(0, this.pageSize)
+        var p2 = this.dataCol1.slice(this.pageSize, 2 * this.pageSize)
+        var p3 = this.dataCol1.slice(2 * this.pageSize, 3 * this.pageSize)
+        var p4 = this.dataCol1.slice(3 * this.pageSize)
+        this.dataInPage.push(p1, p2, p3, p4)
       })
     },
     async getArticle() {
@@ -310,7 +315,7 @@ export default {
       })
     },
     async getAudios() {
-      console.log(123)
+      // console.log(123)
       var url =
         '/student/getAudios?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id
       await this.$http.get(url).then(result => {
@@ -347,7 +352,13 @@ export default {
     },
     finish() {
       var url = '/student/homworkresult'
-      var wordErr = this.dataCol1.concat(this.dataCol2)
+      var wordErr = []
+      wordErr = wordErr.concat(
+        this.dataInPage[0],
+        this.dataInPage[1],
+        this.dataInPage[2],
+        this.dataInPage[3]
+      )
       var data = []
       var j = 0
       var k = 0
@@ -389,7 +400,6 @@ export default {
           data.push(w1)
         }
       }
-      console.log(data)
       var pushData = {
         student_id_refer: this.stu_id,
         homework_doc_id_refer: parseInt(this.doc_id),
@@ -399,11 +409,14 @@ export default {
         word_errors: data,
         comment: this.comment
       }
-      this.$http.post(url, pushData).then(result => {})
-      this.$message({
-        message: '批改提交成功',
-        type: 'success'
+      this.$http.post(url, pushData).then(result => {
+        this.$message({
+          message: '批改提交成功',
+          type: 'success'
+        })
+        this.finishFlag = 1
       })
+
       this.r =
         'http://localhost:8001/api/homework/getReport?stu_id=' +
         this.stu_id +
@@ -416,37 +429,64 @@ export default {
       //   this.doc_id
     },
     report() {
-      var url =
-        '/homework/getReport?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id
-      this.$http.get(url)
+      console.log(this.finishFlag)
+      if (this.finishFlag === 0) {
+        var url =
+          '/homework/getReport?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id
+        this.$http.get(url)
+      } else {
+        this.$message({
+          message: '未提交批改，请先提交批改',
+          type: 'warning'
+        })
+      }
     },
     again() {
+      this.finishFlag = 0
       this.value1 = 0
       this.value2 = 0
       this.value3 = 0
       this.comment = ''
-      for (var i = 0; i < this.dataCol1.length; i++) {
-        this.dataCol1[i].checkedErrors0 = []
-        this.dataCol1[i].checkedErrors1 = []
-        for (var j = 0; j < this.dataCol1[i].checkedErrors1.length; j++) {
-          this.dataCol1[i].checkedErrors1[j] = []
-        }
-        this.dataCol1[i].checkedErrors2 = []
-        for (j = 0; j < this.dataCol1[i].checkedErrors2.length; j++) {
-          this.dataCol1[i].checkedErrors2[j] = []
-        }
-      }
-      for (i = 0; i < this.dataCol2.length; i++) {
-        this.dataCol2[i].checkedErrors0 = []
-        this.dataCol2[i].checkedErrors1 = []
-        for (j = 0; j < this.dataCol2[i].checkedErrors1.length; j++) {
-          this.dataCol2[i].checkedErrors1[j] = []
-        }
-        this.dataCol2[i].checkedErrors2 = []
-        for (j = 0; j < this.dataCol1[i].checkedErrors2.length; j++) {
-          this.dataCol2[i].checkedErrors2[j] = []
+      for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < this.dataInPage[i].length; j++) {
+          this.dataInPage[i][j].checkedErrors0 = []
+          for (
+            var k = 0;
+            k < this.dataInPage[i][j].checkedErrors1.length;
+            k++
+          ) {
+            this.dataInPage[i][j].checkedErrors1[k] = []
+          }
+          for (k = 0; k < this.dataInPage[i][j].checkedErrors2.length; k++) {
+            this.dataInPage[i][j].checkedErrors2[k] = []
+          }
         }
       }
+      // for (var i = 0; i < this.dataCol1.length; i++) {
+      //   this.dataCol1[i].checkedErrors0 = []
+      //   this.dataCol1[i].checkedErrors1 = []
+      //   for (var j = 0; j < this.dataCol1[i].checkedErrors1.length; j++) {
+      //     this.dataCol1[i].checkedErrors1[j] = []
+      //   }
+      //   this.dataCol1[i].checkedErrors2 = []
+      //   for (j = 0; j < this.dataCol1[i].checkedErrors2.length; j++) {
+      //     this.dataCol1[i].checkedErrors2[j] = []
+      //   }
+      // }
+      // for (i = 0; i < this.dataCol2.length; i++) {
+      //   this.dataCol2[i].checkedErrors0 = []
+      //   this.dataCol2[i].checkedErrors1 = []
+      //   for (j = 0; j < this.dataCol2[i].checkedErrors1.length; j++) {
+      //     this.dataCol2[i].checkedErrors1[j] = []
+      //   }
+      //   this.dataCol2[i].checkedErrors2 = []
+      //   for (j = 0; j < this.dataCol1[i].checkedErrors2.length; j++) {
+      //     this.dataCol2[i].checkedErrors2[j] = []
+      //   }
+      // }
+    },
+    handleCurrentChange: function(currentPage) {
+      this.currentPage = currentPage
     }
   }
 }
@@ -486,7 +526,7 @@ export default {
 }
 .hasChosen {
   line-height: 50px;
-  width: 50px;
+  width: 70px;
   font-size: 12px;
 }
 .hasChosenItem {
@@ -507,7 +547,7 @@ export default {
   display: flex;
   flex-direction: row;
   margin-top: 25px;
-  margin-left: 75%;
+  // margin-left: 65%;
 }
 .download {
   margin-left: 10px;
