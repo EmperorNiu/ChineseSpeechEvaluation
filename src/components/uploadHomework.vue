@@ -21,7 +21,7 @@
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
+            >-->
             <el-upload
               class="upload-part"
               ref="upload1"
@@ -40,6 +40,10 @@
               <div slot="tip" class="el-upload__tip">只能预先设定好的doc模板文件</div>
             </el-upload>
           </div>
+          <div style="margin-top:35px">
+            <el-button class="next" size="small" type="warning" @click="secondHomework">命题表达作业</el-button>
+          </div>
+          <div style="margin-top:15px">注：如果是自由评注作业，无需上传文档，直接点击命题表达作业按钮；如果是平时作业，则无需点击此按钮</div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="上传学生音频" name="2">
@@ -59,6 +63,9 @@
                 :value="item.homework_doc_id"
               ></el-option>
             </el-select>
+            <div class="upload-doc-input-text" style="margin-left:30px">
+              <el-checkbox v-model="isfree">是否是命题表达</el-checkbox>
+            </div>
           </div>
           <div class="upload-audio-student">
             <div class="upload-doc-input-text">选择老师：</div>
@@ -93,7 +100,7 @@
             </el-select>
           </div>
           <div class="upload-audio-contain">
-            <div class="upload-doc-input-text">字词训练音频：</div>
+            <div class="upload-doc-input-text">字词训练音频/命题表达音频：</div>
             <!-- <el-upload
               class="audio-upload"
               ref="upload2"
@@ -101,7 +108,7 @@
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
+            >-->
             <el-upload
               class="audio-upload"
               ref="upload2"
@@ -128,7 +135,7 @@
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
+            >-->
             <el-upload
               class="audio-upload"
               ref="upload3"
@@ -215,6 +222,7 @@ export default {
     return {
       title: '',
       describe: '',
+      isfree: false,
       teachers: [],
       selectHomework: '',
       selectTeacher: '',
@@ -297,16 +305,39 @@ export default {
       this.selectStudent = ''
     },
     pushScore() {
-      this.$router.push({
-        path: '/evaluation',
-        query: {
-          homework_doc_id: this.selectHomework,
-          student_id: this.selectStudent
-        }
-      })
+      if (!this.isfree) {
+        this.$router.push({
+          path: '/evaluation',
+          query: {
+            homework_doc_id: this.selectHomework,
+            student_id: this.selectStudent
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/evaluation2',
+          query: {
+            homework_doc_id: this.selectHomework,
+            student_id: this.selectStudent
+          }
+        })
+      }
     },
     debug() {
       console.log(this.selectStudent)
+    },
+    secondHomework() {
+      var url = 'homework/upload/review'
+      var pushData = {
+        title: this.title,
+        describe: this.describe
+      }
+      this.$http.post(url, pushData).then(result => {
+        this.$message({
+          message: '创建作业成功',
+          type: 'success'
+        })
+      })
     }
   }
 }

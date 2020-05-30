@@ -315,12 +315,11 @@ export default {
       })
     },
     async getAudios() {
-      // console.log(123)
       var url =
         '/student/getAudios?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id
       await this.$http.get(url).then(result => {
         var audiosPos = result.data.students_homework
-        console.log(audiosPos)
+        // console.log(audiosPos)
         for (var i = 0; i < audiosPos.length; i++) {
           if (audiosPos[i].type === '1') {
             this.music1 = {

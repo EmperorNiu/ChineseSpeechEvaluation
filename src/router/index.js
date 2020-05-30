@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Frame from '../views/Frame.vue'
 import Frame2 from '../views/Frame2.vue'
 import Homework from '../components/homeworkEvaluation.vue'
+import Homework2 from '../components/homeworkEvaluation2.vue'
 import Upload from '../components/uploadHomework.vue'
 import Select from '../components/SelectWord.vue'
 import SelectedWord from '../components/SelectedWord.vue'
@@ -23,6 +24,7 @@ const routes = [
     children: [
       { path: '/upload', component: Upload },
       { path: '/evaluation', component: Homework },
+      { path: '/evaluation2', component: Homework2 },
       // { path: '/select', component: Select },
       // { path: '/selectedword', component: SelectedWord },
       // { path: '/detail', component: SelectedDetail },
