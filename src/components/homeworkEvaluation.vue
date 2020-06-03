@@ -1,9 +1,10 @@
 <template>
   <div>
-    <el-tabs type="border-card">
+    <el-page-header @back="goBack" content="作业评估"></el-page-header>
+    <el-tabs type="border-card" style="margin-top:20px;">
       <el-tab-pane label="字词训练" class="inner-card">
         <aplayer float :music="music1" class="audio-player" />
-        <div class="container" style="margin-top:60px;">
+        <div class="container" style="margin-top:70px;">
           <div class="word-group" v-for="item in dataInPage[currentPage-1]" :key="item.exercise_id">
             <div class="char-contain">
               <div class="char">
@@ -53,7 +54,7 @@
                   v-for="err in item.checkedErrors1[index]"
                   :key="err"
                   class="hasChosenItem"
-                >{{err.label}},</div>
+                >{{err.label}}</div>
               </div>
             </div>
             <div class="word-char" v-for="(citem,index) in item.word2Split" :key="index">
@@ -219,8 +220,8 @@ export default {
   },
   data() {
     return {
-      // r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
-      r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      // r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
       dataCol1: [],
       dataCol2: [],
       article: '',
@@ -282,31 +283,115 @@ export default {
     this.getAudios()
   },
   methods: {
+    // 获取字词训练
     async getWordExercise() {
-      var url = '/homework/getWordExercise?id=' + this.doc_id
-      await this.$http.get(url).then(result => {
-        var tmp = result.data.result
-        for (var i = 0; i < tmp.length; i++) {
-          tmp[i].checkedErrors0 = []
-          tmp[i].checkedErrors1 = []
-          tmp[i].word1Split = tmp[i].word1.split('')
-          for (var j = 0; j < tmp[i].word1Split.length; j++) {
-            tmp[i].checkedErrors1.push([])
+      // 从homeworkResults跳转
+      if (this.$route.query.special === 1) {
+        var result = this.$route.query.result_id
+        // 获取文章朗读评分和评语
+        var url1 = '/student/getHomeworkResultScore?result_id=' + result
+        await this.$http.get(url1).then(result => {
+          console.log(result.data)
+          var data = result.data.result
+          this.value1 = data.tone_accuracy
+          this.value2 = data.intonation_accuracy
+          this.value3 = data.fluency
+          this.comment = data.comment
+        })
+        // 获取字词错误
+        var url =
+          '/homework/getWordExerciseResult?stu_id=' +
+          this.stu_id +
+          '&result_id=' +
+          result
+        await this.$http.get(url).then(result => {
+          var tmp = result.data.errors
+          var i = 0
+          while (i < tmp.length) {
+            var tmp2 = {}
+            // 字
+            tmp2.character = tmp[i].word
+            if (tmp[i].error_types !== '') {
+              var l = tmp[i].error_types.split(',')
+              var ll = []
+              for (var k = 0; k < l.length; k++) {
+                ll.push({ label: l[k] })
+              }
+              tmp2.checkedErrors0 = ll
+            } else {
+              tmp2.checkedErrors0 = []
+            }
+            // 词1
+            i += 1
+            tmp2.word1Split = tmp[i].whole_word.split('')
+            tmp2.checkedErrors1 = []
+            tmp2.word1 = tmp[i].whole_word
+            for (var j = 0; j < tmp2.word1Split.length; j++) {
+              if (tmp[i].error_types !== '') {
+                l = tmp[i].error_types.split(',')
+                ll = []
+                for (k = 0; k < l.length; k++) {
+                  ll.push({ label: l[k] })
+                }
+                tmp2.checkedErrors1.push(ll)
+              } else {
+                tmp2.checkedErrors1.push([])
+              }
+              i += 1
+            }
+            // 词2
+            tmp2.word2Split = tmp[i].whole_word.split('')
+            tmp2.word2 = tmp[i].whole_word
+            tmp2.checkedErrors2 = []
+            for (j = 0; j < tmp2.word2Split.length; j++) {
+              if (tmp[i].error_types !== '') {
+                l = tmp[i].error_types.split(',')
+                ll = []
+                for (k = 0; k < l.length; k++) {
+                  ll.push({ label: l[k] })
+                }
+                tmp2.checkedErrors2.push(ll)
+              } else {
+                tmp2.checkedErrors2.push([])
+              }
+              i += 1
+            }
+            // console.log(tmp2)
+            this.dataCol1.push(tmp2)
           }
-          tmp[i].checkedErrors2 = []
-          tmp[i].word2Split = tmp[i].word2.split('')
-          for (j = 0; j < tmp[i].word2Split.length; j++) {
-            tmp[i].checkedErrors2.push([])
+          this.pageSize = Math.ceil(this.dataCol1.length / 4)
+          var p1 = this.dataCol1.slice(0, this.pageSize)
+          var p2 = this.dataCol1.slice(this.pageSize, 2 * this.pageSize)
+          var p3 = this.dataCol1.slice(2 * this.pageSize, 3 * this.pageSize)
+          var p4 = this.dataCol1.slice(3 * this.pageSize)
+          this.dataInPage.push(p1, p2, p3, p4)
+        })
+      } else {
+        url = '/homework/getWordExercise?id=' + this.doc_id
+        await this.$http.get(url).then(result => {
+          var tmp = result.data.result
+          for (var i = 0; i < tmp.length; i++) {
+            tmp[i].checkedErrors0 = []
+            tmp[i].checkedErrors1 = []
+            tmp[i].word1Split = tmp[i].word1.split('')
+            for (var j = 0; j < tmp[i].word1Split.length; j++) {
+              tmp[i].checkedErrors1.push([])
+            }
+            tmp[i].checkedErrors2 = []
+            tmp[i].word2Split = tmp[i].word2.split('')
+            for (j = 0; j < tmp[i].word2Split.length; j++) {
+              tmp[i].checkedErrors2.push([])
+            }
+            this.dataCol1.push(tmp[i])
           }
-          this.dataCol1.push(tmp[i])
-        }
-        this.pageSize = Math.ceil(this.dataCol1.length / 4)
-        var p1 = this.dataCol1.slice(0, this.pageSize)
-        var p2 = this.dataCol1.slice(this.pageSize, 2 * this.pageSize)
-        var p3 = this.dataCol1.slice(2 * this.pageSize, 3 * this.pageSize)
-        var p4 = this.dataCol1.slice(3 * this.pageSize)
-        this.dataInPage.push(p1, p2, p3, p4)
-      })
+          this.pageSize = Math.ceil(this.dataCol1.length / 4)
+          var p1 = this.dataCol1.slice(0, this.pageSize)
+          var p2 = this.dataCol1.slice(this.pageSize, 2 * this.pageSize)
+          var p3 = this.dataCol1.slice(2 * this.pageSize, 3 * this.pageSize)
+          var p4 = this.dataCol1.slice(3 * this.pageSize)
+          this.dataInPage.push(p1, p2, p3, p4)
+        })
+      }
     },
     async getArticle() {
       var url = '/homework/getArticle?id=' + this.doc_id
@@ -324,23 +409,23 @@ export default {
           if (audiosPos[i].type === '1') {
             this.music1 = {
               title: '字词训练',
-              // url:
-              //   'http://localhost:8001/api/resource/audio?pos=' +
-              //   audiosPos[i].audio,
               url:
-                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                'http://localhost:8001/api/resource/audio?pos=' +
                 audiosPos[i].audio,
+              // url:
+              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           } else {
             this.music2 = {
               title: '课文朗读',
-              // url:
-              //   'http://localhost:8001/api/resource/audio?pos=' +
-              //   audiosPos[i].audio,
               url:
-                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                'http://localhost:8001/api/resource/audio?pos=' +
                 audiosPos[i].audio,
+              // url:
+              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           }
@@ -349,6 +434,7 @@ export default {
         }
       })
     },
+    // 完成并上传批改
     finish() {
       var url = '/student/homworkresult'
       var wordErr = []
@@ -408,7 +494,8 @@ export default {
         intonation_accuracy: this.value2,
         fluency: this.value3,
         word_errors: data,
-        comment: this.comment
+        comment: this.comment,
+        is_thesis_express: 0
       }
       this.$http.post(url, pushData).then(result => {
         this.$message({
@@ -418,17 +505,18 @@ export default {
         this.finishFlag = 1
       })
 
-      // this.r =
-      //   'http://localhost:8001/api/homework/getReport?stu_id=' +
-      //   this.stu_id +
-      //   '&doc_id=' +
-      //   this.doc_id
       this.r =
-        'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+        'http://localhost:8001/api/homework/getReport?stu_id=' +
         this.stu_id +
         '&doc_id=' +
         this.doc_id
+      // this.r =
+      //   'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+      //   this.stu_id +
+      //   '&doc_id=' +
+      //   this.doc_id
     },
+    // 弃用
     report() {
       console.log(this.finishFlag)
       if (this.finishFlag === 0) {
@@ -488,6 +576,10 @@ export default {
     },
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage
+    },
+    // 返回上一个界面
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
@@ -556,6 +648,6 @@ export default {
 .audio-player {
   position: fixed;
   width: 80%;
-  top: 120px;
+  top: 170px;
 }
 </style>

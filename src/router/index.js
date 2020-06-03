@@ -2,8 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Frame from '../views/Frame.vue'
 import Frame2 from '../views/Frame2.vue'
+import Login from '../components/Login.vue'
+import ChangePassword from '../components/ChangePassword.vue'
 import Homework from '../components/homeworkEvaluation.vue'
 import Homework2 from '../components/homeworkEvaluation2.vue'
+import HomeworkResults from '../components/HomeworkResults.vue'
 import Upload from '../components/uploadHomework.vue'
 import Select from '../components/SelectWord.vue'
 import SelectedWord from '../components/SelectedWord.vue'
@@ -18,6 +21,18 @@ const routes = [
     component: Entry
   },
   {
+    path: '/',
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/password',
+    component: ChangePassword
+  },
+  {
     path: '/upload',
     component: Frame,
     redirect: '/upload',
@@ -25,6 +40,7 @@ const routes = [
       { path: '/upload', component: Upload },
       { path: '/evaluation', component: Homework },
       { path: '/evaluation2', component: Homework2 },
+      { path: '/homeworkresult', component: HomeworkResults },
       // { path: '/select', component: Select },
       // { path: '/selectedword', component: SelectedWord },
       // { path: '/detail', component: SelectedDetail },

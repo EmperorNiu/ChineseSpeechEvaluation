@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-tabs type="border-card">
+    <el-page-header @back="goBack" content="作业评估"></el-page-header>
+    <el-tabs type="border-card" style="margin-top:20px;">
       <el-tab-pane label="命题表达" class="inner-card">
         <aplayer float :music="music" />
         <div class="block" style="margin-top:50px">
@@ -43,8 +44,8 @@ export default {
   },
   data() {
     return {
-      // r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
-      r: 'http://47.103.83.192:8001/api/homework/getReport2?stu_id=0&doc_id=5',
+      r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      // r: 'http://47.103.83.192:8001/api/homework/getReport2?stu_id=0&doc_id=5',
       value1: 0,
       value2: 0,
       value3: 0,
@@ -59,6 +60,9 @@ export default {
   mounted() {
     this.doc_id = this.$route.query.homework_doc_id
     this.stu_id = this.$route.query.student_id
+    if (this.$route.query.special === 1) {
+      this.getHistory()
+    }
     this.getAudios()
   },
   methods: {
@@ -71,18 +75,19 @@ export default {
           if (audiosPos[i].type === '1') {
             this.music = {
               title: '字词训练',
-              // url:
-              //   'http://localhost:8001/api/resource/audio?pos=' +
-              //   audiosPos[i].audio,
               url:
-                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                'http://localhost:8001/api/resource/audio?pos=' +
                 audiosPos[i].audio,
+              // url:
+              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           }
         }
       })
     },
+    // 完成并上传批改
     finish() {
       var url = '/student/homworkresult'
       var pushData = {
@@ -91,7 +96,8 @@ export default {
         tone_accuracy: this.value1,
         intonation_accuracy: this.value2,
         fluency: this.value3,
-        comment: this.comment
+        comment: this.comment,
+        is_thesis_express: 1
       }
       this.$http.post(url, pushData).then(result => {
         this.$message({
@@ -99,22 +105,38 @@ export default {
           type: 'success'
         })
       })
-      // this.r =
-      //   'http://localhost:8001/api/homework/getReport2?stu_id=' +
-      //   this.stu_id +
-      //   '&doc_id=' +
-      //   this.doc_id
       this.r =
-        'http://47.103.83.192:8001/api/homework/getReport2?stu_id=' +
+        'http://localhost:8001/api/homework/getReport2?stu_id=' +
         this.stu_id +
         '&doc_id=' +
         this.doc_id
+      // this.r =
+      //   'http://47.103.83.192:8001/api/homework/getReport2?stu_id=' +
+      //   this.stu_id +
+      //   '&doc_id=' +
+      //   this.doc_id
     },
     again() {
       this.value1 = 0
       this.value2 = 0
       this.value3 = 0
       this.comment = ''
+    },
+    goBack() {
+      this.$router.go(-1)
+    },
+    // 获取历史批改结果
+    async getHistory() {
+      var result = this.$route.query.result_id
+      var url1 = '/student/getHomeworkResultScore?result_id=' + result
+      await this.$http.get(url1).then(result => {
+        console.log(result.data)
+        var data = result.data.result
+        this.value1 = data.tone_accuracy
+        this.value2 = data.intonation_accuracy
+        this.value3 = data.fluency
+        this.comment = data.comment
+      })
     }
   }
 }
