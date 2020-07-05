@@ -220,8 +220,8 @@ export default {
   },
   data() {
     return {
-      r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
-      // r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      // r: 'http://localhost:8001/api/homework/getReport?stu_id=0&doc_id=5',
+      r: 'http://47.103.83.192:8001/api/homework/getReport?stu_id=0&doc_id=5',
       dataCol1: [],
       dataCol2: [],
       article: '',
@@ -307,6 +307,7 @@ export default {
         await this.$http.get(url).then(result => {
           var tmp = result.data.errors
           var i = 0
+          console.log('length: ', tmp.length)
           while (i < tmp.length) {
             var tmp2 = {}
             // 字
@@ -321,8 +322,19 @@ export default {
             } else {
               tmp2.checkedErrors0 = []
             }
-            // 词1
             i += 1
+            if (tmp[i].whole_word === '') {
+              tmp2.word1Split = []
+              tmp2.word1 = ''
+              tmp2.checkedErrors1 = []
+              tmp2.word2Split = []
+              tmp2.word2 = ''
+              tmp2.checkedErrors2 = []
+              this.dataCol1.push(tmp2)
+              // console.log(tmp2)
+              continue
+            }
+            // 词1
             tmp2.word1Split = tmp[i].whole_word.split('')
             tmp2.checkedErrors1 = []
             tmp2.word1 = tmp[i].whole_word
@@ -338,6 +350,18 @@ export default {
                 tmp2.checkedErrors1.push([])
               }
               i += 1
+            }
+            if (i >= tmp.length) {
+              break
+            }
+            if (tmp[i].whole_word === '') {
+              tmp2.word2Split = []
+              tmp2.word2 = ''
+              tmp2.checkedErrors2 = []
+              this.dataCol1.push(tmp2)
+              // console.log(tmp2)
+              // console.log(i)
+              continue
             }
             // 词2
             tmp2.word2Split = tmp[i].whole_word.split('')
@@ -409,23 +433,23 @@ export default {
           if (audiosPos[i].type === '1') {
             this.music1 = {
               title: '字词训练',
-              url:
-                'http://localhost:8001/api/resource/audio?pos=' +
-                audiosPos[i].audio,
               // url:
-              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   'http://localhost:8001/api/resource/audio?pos=' +
               //   audiosPos[i].audio,
+              url:
+                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           } else {
             this.music2 = {
               title: '课文朗读',
-              url:
-                'http://localhost:8001/api/resource/audio?pos=' +
-                audiosPos[i].audio,
               // url:
-              //   'http://47.103.83.192:8001/api/resource/audio?pos=' +
+              //   'http://localhost:8001/api/resource/audio?pos=' +
               //   audiosPos[i].audio,
+              url:
+                'http://47.103.83.192:8001/api/resource/audio?pos=' +
+                audiosPos[i].audio,
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           }
@@ -502,19 +526,18 @@ export default {
           message: '批改提交成功',
           type: 'success'
         })
-        this.finishFlag = 1
       })
 
-      this.r =
-        'http://localhost:8001/api/homework/getReport?stu_id=' +
-        this.stu_id +
-        '&doc_id=' +
-        this.doc_id
       // this.r =
-      //   'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+      //   'http://localhost:8001/api/homework/getReport?stu_id=' +
       //   this.stu_id +
       //   '&doc_id=' +
       //   this.doc_id
+      this.r =
+        'http://47.103.83.192:8001/api/homework/getReport?stu_id=' +
+        this.stu_id +
+        '&doc_id=' +
+        this.doc_id
     },
     // 弃用
     report() {
