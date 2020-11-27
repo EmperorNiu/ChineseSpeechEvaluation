@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-page-header @back="goBack" :content="content"></el-page-header>
-    <el-table :data="results" height="600" border style="width: 100%;margin-top:20px;">
+    <el-table :data="results" height="520" border style="width: 100%;margin-top:20px;">
       <el-table-column prop="homework_name" label="作业"></el-table-column>
       <el-table-column prop="tone_accuracy" label="声调准确率"></el-table-column>
       <el-table-column prop="intonation_accuracy" label="语调准确率"></el-table-column>
@@ -17,6 +17,9 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-link :href="summary_url" class="bottom-btn">
+      <el-button type="success">生成学生作业总结</el-button>
+    </el-link>
   </div>
 </template>
 
@@ -25,14 +28,19 @@ export default {
   data() {
     return {
       stu_id: '',
+      stu_name: '',
       doc_id: '',
       result_id: '',
       results: [],
-      content: ''
+      content: '',
+      summary_url: ''
     }
   },
   mounted() {
     this.stu_id = this.$route.query.stu_id
+    this.stu_name = this.$route.query.stu_name
+    // this.summary_url = 'http://localhost:8001/api/student/getSummary?stu_id=' + this.stu_id + '&stu_name=' + this.stu_name
+    this.summary_url = 'http://47.103.83.192:8001/api/student/getSummary?stu_id=' + this.stu_id + '&stu_name=' + this.stu_name
     this.content = this.stu_id + ' 学生作业'
     var url = '/student/getHomeworkResults?stu_id=' + this.stu_id
     this.$http.get(url).then(result => {
@@ -98,4 +106,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.bottom-btn{
+  margin-top: 15px;
+  margin-left: 88%
+}
 </style>

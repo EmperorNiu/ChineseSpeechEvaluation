@@ -23,14 +23,14 @@
               :auto-upload="false"
               :on-success="successUpload"
             > -->
-              <el-upload
+            <el-upload
               class="upload-part"
               ref="upload1"
               action="http://47.103.83.192:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
-              >
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -95,14 +95,14 @@
               :auto-upload="false"
               :on-success="successUpload"
             > -->
-              <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-              >
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -122,14 +122,14 @@
               :auto-upload="false"
               :on-success="successUpload"
             > -->
-              <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-              >
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -159,11 +159,141 @@
           <el-table-column prop="ke_tang_pai_account" label="课堂派账号"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="seeHomework(scope.row.student_id)" type="text" size="small">查看作业</el-button>
+              <el-button @click="seeHomework(scope.row)" type="text" size="small">查看作业</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
+      <el-tab-pane label="作业管理" name="4">
+        <div class="table-header">
+          <div class="table-header-title">作业列表</div>
+        </div>
+        <el-table
+          :data="docList"
+          style="width: 50%"
+        >
+          <el-table-column prop="title" label="作业名称"></el-table-column>
+          <el-table-column prop="describe" label="作业描述"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button @click="deleteHomework(scope.row.homework_doc_id)" type="text" size="small">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="人员管理" name="5">
+        <h3>人员管理：添加学员及老师</h3>
+        <div class="upload-doc-main">
+          <div class="upload-doc-input-text">文件：</div>
+          <!-- <el-upload
+            class="upload-part"
+            ref="StudentListFile"
+            action="http://localhost:8001/api/student/upload/StudentList"
+            :auto-upload="false"
+            :on-success="successUpload"
+          > -->
+          <el-upload
+            class="upload-part"
+            ref="StudentListFile"
+            action="http://47.103.83.192:8001/api/student/upload/StudentList"
+            :auto-upload="false"
+          >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button
+              style="margin-left: 10px;"
+              size="small"
+              type="success"
+              @click="uploadStudentList"
+            >上传</el-button>
+            <div slot="tip" class="el-upload__tip">请参照模板xlsx文件上传</div>
+          </el-upload>
+        </div>
+        <h3>标准模板</h3>
+        <el-table
+          :data="exampleTableData"
+          style="width: 100%"
+          :span-method="objectSpanMethod">
+          <el-table-column
+            prop="id"
+            label="序号">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="姓名"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="stu_id"
+            label="学号">
+          </el-table-column>
+          <el-table-column
+            prop="ketangpaiid"
+            label="课堂派账号">
+          </el-table-column>
+          <el-table-column
+            prop="phone_num"
+            label="手机号">
+          </el-table-column>
+          <el-table-column
+            prop="group"
+            label="所在小组">
+          </el-table-column>
+          <el-table-column
+            prop="teacher"
+            label="培训教师">
+          </el-table-column>
+          <el-table-column
+            prop="ketangpaiid2"
+            label="课堂派账号">
+          </el-table-column>
+          <el-table-column
+            prop="tphone_num"
+            label="教师电话">
+          </el-table-column>
+        </el-table>
+        <div>
+          <el-link href="http://47.103.83.192:8001/api/resource/studentListTemplate">
+            <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
+          </el-link>
+        </div>
+        <p>注：上传文件格式为xlsx，列名必须完全一致，且顺序相同，其他格式无要求</p>
+      </el-tab-pane>
+      <!-- <el-tab-pane label="教师-学生管理" name="6">
+        <el-row>
+          <el-col :span="12">
+            <h3>老师列表</h3>
+            <el-table
+              :data="studentList.filter(data => !search || data.student_id.toLowerCase().includes(search.toLowerCase()))"
+              style="width: 100%" lazy
+            >
+              <el-table-column prop="student_id" label="学号"></el-table-column>
+              <el-table-column prop="name" label="姓名"></el-table-column>
+              <el-table-column prop="ke_tang_pai_account" label="课堂派账号"></el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <el-button @click="seeHomework(scope.row)" type="text" size="small">查看作业</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+          <el-col :span="12">
+            <h3>学生列表</h3>
+            <el-table
+              :data="studentList.filter(data => !search || data.student_id.toLowerCase().includes(search.toLowerCase()))"
+              style="width: 100%"
+            >
+              <el-table-column prop="student_id" label="学号"></el-table-column>
+              <el-table-column prop="name" label="姓名"></el-table-column>
+              <el-table-column prop="ke_tang_pai_account" label="课堂派账号"></el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="scope">
+                  <el-button @click="seeHomework(scope.row)" type="text" size="small">查看作业</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+      </el-tab-pane> -->
     </el-tabs>
     <!-- 普通权限界面 -->
     <el-tabs v-model="activeTab" @tab-click="handleClick" type="border-card" v-show="level === '1'">
@@ -214,14 +344,14 @@
               :auto-upload="false"
               :on-success="successUpload"
             > -->
-              <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-              >
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -241,14 +371,14 @@
               :auto-upload="false"
               :on-success="successUpload"
             > -->
-              <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-              >
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -270,7 +400,7 @@
           <el-table-column prop="ke_tang_pai_account" label="课堂派账号"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="seeHomework(scope.row.student_id)" type="text" size="small">查看作业</el-button>
+              <el-button @click="seeHomework(scope.row)" type="text" size="small">查看作业</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -325,13 +455,51 @@ export default {
           label: '常速朗读'
         }
       ],
-      search: ''
+      search: '',
+      exampleTableData: [
+        {
+          id: 1,
+          name: '李晓明',
+          stu_id: 'LSZX011',
+          ketangpaiid: 'ktp0256699607',
+          phone_num: '12658997658',
+          group: '第1组',
+          teacher: '欧阳婉云',
+          ketangpaiid2: 'ktp594699607',
+          tphone_num: '18658157658'
+        },
+        {
+          id: 2,
+          name: '王小虎',
+          stu_id: 'LSZX012',
+          ketangpaiid: 'ktp0256699617',
+          phone_num: '13898397658',
+          group: '第1组',
+          teacher: '欧阳婉云',
+          ketangpaiid2: 'ktp594699607',
+          tphone_num: '18658157658'
+        }
+      ]
     }
   },
   methods: {
     // 上传文档
     submitUpload() {
       this.$refs.upload1.submit()
+      this.$message({
+        message: '上传成功',
+        type: 'success'
+      })
+      this.getDocs()
+    },
+    // 上传学生列表
+    uploadStudentList() {
+      this.$refs.StudentListFile.submit()
+      this.$$refs.StudentListFile.clearFiles()
+      this.$message({
+        message: '上传成功',
+        type: 'success'
+      })
     },
     // 上传音频1
     submitUpload2() {
@@ -344,6 +512,7 @@ export default {
     // 上传成功提示
     successUpload(res, file, files) {
       this.$refs.upload1.clearFiles()
+      this.$refs.upload2.clearFiles()
       this.title = ''
       this.describe = ''
       this.homeworkDocId = res.homework_id
@@ -358,26 +527,26 @@ export default {
     },
     getDocs() {
       var url = '/homework/getDoc'
-      this.$http.get(url).then(result => {
+      this.$http.get(url).then((result) => {
         this.docList = result.data.docs
       })
     },
     // 获取所有学生列表
     getStudents() {
       var url = '/student/getAllStudent'
-      this.$http.get(url).then(result => {
+      this.$http.get(url).then((result) => {
         this.studentList = result.data.students
       })
     },
     getTeachers() {
       var url = '/student/getTeachers'
-      this.$http.get(url).then(result => {
+      this.$http.get(url).then((result) => {
         this.teachers = result.data.teachers
       })
     },
     getStudentByTeacher(teacher) {
       var url = '/student/getStudentByTeacher?teacher=' + teacher
-      this.$http.get(url).then(result => {
+      this.$http.get(url).then((result) => {
         this.studentList = result.data.students
         // console.log(this.studentList)
       })
@@ -425,7 +594,7 @@ export default {
         title: this.title,
         describe: this.describe
       }
-      this.$http.post(url, pushData).then(result => {
+      this.$http.post(url, pushData).then((result) => {
         this.$message({
           message: '创建作业成功',
           type: 'success'
@@ -436,13 +605,36 @@ export default {
       this.$router.push({
         path: '/homeworkresult',
         query: {
-          stu_id: x
+          stu_id: x.student_id,
+          stu_name: x.name
         }
+      })
+    },
+    deleteHomework(id) {
+      console.log(id)
+      var url = '/homework/deleteHomework?doc_id=' + id
+      this.$http.get(url).then((result) => {
+        this.getDocs()
       })
     },
     filterIdHandler(value, row, column) {
       const property = column.property
       return row[property] === value
+    },
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 5 || columnIndex === 6 || columnIndex === 7 || columnIndex === 8) {
+        if (rowIndex % 2 === 0) {
+          return {
+            rowspan: 2,
+            colspan: 1
+          }
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          }
+        }
+      }
     }
   }
 }

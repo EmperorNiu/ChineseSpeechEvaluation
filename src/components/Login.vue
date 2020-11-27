@@ -1,5 +1,8 @@
 <template>
   <div class="login-container">
+    <div class="skip">
+      <el-button type="text" @click="skip">作业选词</el-button>
+    </div>
     <div class="login-box">
       <div class="title">作业评测登录</div>
       <!-- 表单区域 -->
@@ -105,12 +108,19 @@ export default {
     },
     changePassword() {
       this.$router.push('/password')
+    },
+    skip() {
+      this.$router.push('/select')
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.skip {
+  margin-left: 95%;
+  color: white;
+}
 .login-container {
   //   background-color: rgb(41, 0, 107);
   background: -moz-linear-gradient(top, #050505 0%, #e4e4e4 100%);
@@ -127,7 +137,6 @@ export default {
   background: linear-gradient(to bottom, #050505 0%, #e4e4e4 100%);
   //   background-color: #2b4b6b;
   height: 100%;
-  //   background-image: url("../assets/starry-sky-1654074_1920.jpg");
 }
 .keep-login {
   margin-right: 20px;

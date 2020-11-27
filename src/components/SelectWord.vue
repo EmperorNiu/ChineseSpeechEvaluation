@@ -30,8 +30,11 @@
                 <el-option label="中字库" value="2"></el-option>
                 <el-option label="新建库" value="3"></el-option>
               </el-select>
-              <el-button slot="append" icon="el-icon-search" @click="querySearchChar"></el-button>
+              <el-button slot="append" icon="el-icon-search" @click="querySearchChar" @keyup.enter="querySearchChar"></el-button>
             </el-input>
+          </div>
+          <div v-if="polyphoneShow">
+            <p>hello world</p>
           </div>
           <el-table :data="selectchars" border style="width: 100%" max-height="300px">
             <el-table-column prop="word" label="字"></el-table-column>
@@ -103,6 +106,10 @@
 </template>
 
 <script>
+var pinyin = require('pinyin')
+console.log(pinyin('中心', {
+  heteronym: true// 启用多音字模式
+}))
 export default {
   data() {
     return {
@@ -122,7 +129,8 @@ export default {
       iscommon: true,
       drawer: false,
       historys: [],
-      length: 0
+      length: 0,
+      polyphoneShow: false
     }
   },
   methods: {
@@ -139,7 +147,7 @@ export default {
           }
           this.selectchars.push(tmp)
         })
-        console.log(this.selectchars)
+        // this.polyphoneShow = true
       })
     },
     handleSelect1(item) {

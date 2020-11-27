@@ -254,6 +254,10 @@ export default {
           name: '轻音错误'
         },
         {
+          label: 'I',
+          name: '多音字错误'
+        },
+        {
           label: 'A',
           name: '错读'
         },

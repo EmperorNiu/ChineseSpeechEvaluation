@@ -15,7 +15,8 @@
   </el-menu>-->
   <div>
     <div class="title">
-      <p>测试版v0.2发布</p>
+      <img src="../assets/badge.png" class="logo">
+      <p class="title-text">国家通用语言语音学习分析系统</p>
     </div>
   </div>
 </template>
@@ -43,5 +44,15 @@ export default {
 <style lang="less" scoped>
 .title{
   color: whitesmoke;
+  display: flex;
+  flex-direction: row;
+}
+.logo {
+  width: 44px;
+  height: 44px;
+  margin: 8px 20px 8px 5px;
+}
+.title-text {
+  margin-top: 20px;
 }
 </style>
