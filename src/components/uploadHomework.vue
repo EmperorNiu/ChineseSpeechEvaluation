@@ -15,22 +15,22 @@
           </div>
           <div class="upload-doc-main">
             <div class="upload-doc-input-text">文件：</div>
-            <!-- <el-upload
+            <el-upload
               class="upload-part"
               ref="upload1"
               action="http://localhost:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
-            <el-upload
+            >
+            <!-- <el-upload
               class="upload-part"
               ref="upload1"
               action="http://47.103.83.192:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -87,22 +87,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">字词训练音频/命题表达音频：</div>
-            <!-- <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
-            <el-upload
+            >
+            <!-- <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -114,22 +114,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">课文朗读音频：</div>
-            <!-- <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
-            <el-upload
+            >
+            <!-- <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -185,19 +185,19 @@
         <h3>人员管理：添加学员及老师</h3>
         <div class="upload-doc-main">
           <div class="upload-doc-input-text">文件：</div>
-          <!-- <el-upload
+          <el-upload
             class="upload-part"
             ref="StudentListFile"
             action="http://localhost:8001/api/student/upload/StudentList"
             :auto-upload="false"
             :on-success="successUpload"
-          > -->
-          <el-upload
+          >
+          <!-- <el-upload
             class="upload-part"
             ref="StudentListFile"
             action="http://47.103.83.192:8001/api/student/upload/StudentList"
             :auto-upload="false"
-          >
+          > -->
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
               style="margin-left: 10px;"
@@ -252,7 +252,10 @@
           </el-table-column>
         </el-table>
         <div>
-          <el-link href="http://47.103.83.192:8001/api/resource/studentListTemplate">
+          <!-- <el-link href="http://47.103.83.192:8001/api/resource/studentListTemplate">
+            <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
+          </el-link> -->
+          <el-link href="http://localhost:8001/api/resource/studentListTemplate">
             <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
           </el-link>
         </div>
@@ -336,22 +339,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">字词训练音频/命题表达音频：</div>
-            <!-- <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
-            <el-upload
+            >
+            <!-- <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -363,22 +366,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">课文朗读音频：</div>
-            <!-- <el-upload
+            <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
-            <el-upload
+            >
+            <!-- <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
+            > -->
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"

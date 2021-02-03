@@ -39,8 +39,8 @@ export default {
   mounted() {
     this.stu_id = this.$route.query.stu_id
     this.stu_name = this.$route.query.stu_name
-    // this.summary_url = 'http://localhost:8001/api/student/getSummary?stu_id=' + this.stu_id + '&stu_name=' + this.stu_name
-    this.summary_url = 'http://47.103.83.192:8001/api/student/getSummary?stu_id=' + this.stu_id + '&stu_name=' + this.stu_name
+    this.summary_url = 'http://localhost:8001/api/student/getSummary?stu_id=' + this.stu_id + '&stu_name=' + this.stu_name
+    // this.summary_url = 'http://47.103.83.192:8001/api/student/getSummary?stu_id=' + this.stu_id + '&stu_name=' + this.stu_name
     this.content = this.stu_id + ' 学生作业'
     var url = '/student/getHomeworkResults?stu_id=' + this.stu_id
     this.$http.get(url).then(result => {
