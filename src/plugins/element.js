@@ -3,6 +3,7 @@ import {
   Button, Form, FormItem, Input, Message,
   Menu, MenuItem, MenuItemGroup, Submenu,
   Container, Header, Main, Aside,
+  RadioGroup, Radio,
   Breadcrumb, BreadcrumbItem, Card, Drawer,
   Tabs, TabPane, Upload, Select, Option, Collapse, CollapseItem,
   Autocomplete, Table, TableColumn, Popover, Checkbox, CheckboxGroup,
@@ -39,6 +40,8 @@ Vue.use(Popover)
 Vue.use(Checkbox)
 Vue.use(CheckboxGroup)
 Vue.use(Row)
+Vue.use(RadioGroup)
+Vue.use(Radio)
 Vue.use(Col)
 Vue.use(Slider)
 Vue.use(Steps)

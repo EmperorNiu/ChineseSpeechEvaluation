@@ -15,6 +15,13 @@ axios.defaults.baseURL = 'http://localhost:8001/api/'
 Vue.prototype.$http = axios
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
+})
 new Vue({
   router,
   render: h => h(App)

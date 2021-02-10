@@ -1,10 +1,54 @@
+<!-- 登录界面 -->
 <template>
   <div class="login-container">
+    <!-- 顶部跳转 -->
     <div class="skip">
-      <el-button type="text" @click="skip">作业选词</el-button>
+      <el-button type="text" @click="skip" style="color:white">作业选词</el-button>
     </div>
-    <div class="login-box">
-      <div class="title">作业评测登录</div>
+    <!-- 身份登录按钮组 -->
+    <div class="login-box" v-show="role === '0'">
+      <!-- 标题 -->
+      <div class="title">选择身份登录</div>
+      <!-- 身份登录按钮组 -->
+      <el-row class="roleBtns">
+        <el-col :span="12" style="text-align:center;">
+          <el-button type="warning" round @click="role='1'">我是学生</el-button>
+        </el-col>
+        <el-col :span="12" style="text-align:center;">
+          <el-button type="primary" round @click="role='2'">我是老师</el-button>
+        </el-col>
+      </el-row>
+    </div>
+    <!-- 学生登录 -->
+    <div class="login-box" v-show="role === '1'">
+      <!-- 标题 -->
+      <div class="title">学生登录</div>
+      <!-- 表单区域 -->
+      <el-form
+        label-width="0"
+        class="login_form"
+        :model="loginForm"
+        :rules="loginFormRules"
+        ref="loginFormRef"
+      >
+        <el-form-item prop="username">
+          <el-input placeholder="用户名" type="text" v-model="loginForm.name"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input placeholder="请输入密码" type="password" v-model="loginForm.password"></el-input>
+        </el-form-item>
+        <el-form-item class="btns">
+          <el-checkbox v-model="checked" style="margin-right:15px">保存密码</el-checkbox>
+          <el-button round @click="changePassword">更改密码</el-button>
+          <el-button type="warning" round @click="register">注册</el-button>
+          <el-button type="primary" round @click="login">登录</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <!-- 老师登录 -->
+    <div class="login-box" v-show="role === '2'">
+      <!-- 标题 -->
+      <div class="title">作业评测老师登录</div>
       <!-- 表单区域 -->
       <el-form
         label-width="0"
@@ -33,10 +77,10 @@
           <el-input placeholder="请输入密码" type="password" v-model="loginForm.password"></el-input>
         </el-form-item>
         <el-form-item class="btns">
-          <el-checkbox v-model="checked" style="margin-right:15px">一周内自动登录</el-checkbox>
+          <el-checkbox v-model="checked" style="margin-right:15px">保存密码</el-checkbox>
+          <el-button round @click="changePassword">更改密码</el-button>
+          <el-button type="warning" round @click="register">注册</el-button>
           <el-button type="primary" round @click="login">登录</el-button>
-          <!-- <el-button type="cancel" round @click="resetForm">注册</el-button> -->
-          <el-button type="warning" circle @click="changePassword">更改密码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -47,6 +91,7 @@
 export default {
   data() {
     return {
+      role: '0', // 0是选择，1是学生，2是老师
       loginForm: {
         name: '',
         password: '123456'
@@ -77,7 +122,7 @@ export default {
       localStorage.setItem('pwd', this.loginForm.password)
     },
     getlocalStorage() {
-      this.loginForm.username = localStorage.getItem('name')
+      this.loginForm.name = localStorage.getItem('name')
       this.loginForm.password = localStorage.getItem('pwd')
     },
     login() {
@@ -106,6 +151,9 @@ export default {
           })
       })
     },
+    register() {
+      this.$router.push('/register')
+    },
     changePassword() {
       this.$router.push('/password')
     },
@@ -122,20 +170,18 @@ export default {
   color: white;
 }
 .login-container {
-  //   background-color: rgb(41, 0, 107);
-  background: -moz-linear-gradient(top, #050505 0%, #e4e4e4 100%);
+  background: -moz-linear-gradient(top, #000f41 0%, #c7d8ff 100%);
   background: -webkit-gradient(
     linear,
     left top,
     left bottom,
-    color-stop(0%, #050505),
-    color-stop(100%, #e4e4e4)
+    color-stop(0%, #000f41),
+    color-stop(100%, #c7d8ff)
   );
-  background: -webkit-linear-gradient(top, #050505 0%, #e4e4e4 100%);
-  background: -o-linear-gradient(top, #050505 0%, #e4e4e4 100%);
-  background: -ms-linear-gradient(top, #050505 0%, #e4e4e4 100%);
-  background: linear-gradient(to bottom, #050505 0%, #e4e4e4 100%);
-  //   background-color: #2b4b6b;
+  background: -webkit-linear-gradient(top, #000f41 0%, #dddddd 100%);
+  background: -o-linear-gradient(top, #000f41 0%, #c7d8ff 100%);
+  background: -ms-linear-gradient(top, #000f41 0%, #c7d8ff 100%);
+  background: linear-gradient(to bottom, #000f41 0%, #c7d8ff 100%);
   height: 100%;
 }
 .keep-login {
@@ -190,5 +236,10 @@ export default {
 .btns {
   display: flex;
   justify-content: flex-end;
+}
+.roleBtns {
+  display: flex;
+  width: 100%;
+  margin-top: 95px;
 }
 </style>

@@ -2,8 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Frame from '../views/Frame.vue'
 import Frame2 from '../views/Frame2.vue'
-import Login from '../components/Login.vue'
-import ChangePassword from '../components/ChangePassword.vue'
+// Auth
+import Login from '../components/Auth/Login.vue'
+import ChangePassword from '../components/Auth/ChangePassword.vue'
+import Register from '../components/Auth/Register.vue'
+// Homework
 import Homework from '../components/homeworkEvaluation.vue'
 import Homework2 from '../components/homeworkEvaluation2.vue'
 import HomeworkResults from '../components/HomeworkResults.vue'
@@ -26,7 +29,14 @@ const routes = [
   },
   {
     path: '/login',
-    component: Login
+    component: Login,
+    meta: {
+      title: '首页'
+    }
+  },
+  {
+    path: '/register',
+    component: Register
   },
   {
     path: '/password',
