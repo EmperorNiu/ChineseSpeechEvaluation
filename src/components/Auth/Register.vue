@@ -15,6 +15,9 @@
         <el-form-item label="姓名" prop="name" class="changeLabel">
           <el-input v-model="registerForm.name"></el-input>
         </el-form-item>
+        <el-form-item label="学号" prop="id" class="changeLabel">
+          <el-input v-model="registerForm.id" placeholder="请输入学号，如不知道请询问"></el-input>
+        </el-form-item>
         <el-form-item label="密码" prop="password" class="changeLabel">
           <el-input v-model="registerForm.password" type="password"></el-input>
         </el-form-item>
@@ -26,9 +29,6 @@
             <el-radio label="老师"></el-radio>
             <el-radio label="学生"></el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="地区" prop="region">
-          <el-input v-model="registerForm.region"></el-input>
         </el-form-item>
         <el-form-item class="btns">
           <el-button type="primary" @click="register" class="btn1">注册</el-button>
@@ -46,8 +46,8 @@ export default {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
+        if (this.registerForm.checkPass !== '') {
+          this.$refs.registerForm.validateField('checkPass')
         }
         callback()
       }
@@ -55,7 +55,7 @@ export default {
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.pass) {
+      } else if (value !== this.registerForm.pass) {
         callback(new Error('两次输入密码不一致!'))
       } else {
         callback()
@@ -64,13 +64,14 @@ export default {
     return {
       registerForm: {
         name: '',
+        id: '',
         password: '',
         checkPass: '',
-        role: '',
-        region: ''
+        role: ''
       },
       rules: {
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        id: [{ required: true, message: '请输入学号', trigger: 'blur' }],
         password: [{ validator: validatePass, trigger: 'blur' }],
         checkPass: [{ validator: validatePass2, trigger: 'blur' }],
         major: [{ required: true, message: '请输入专业', trigger: 'blur' }]
@@ -79,7 +80,14 @@ export default {
       checked: true
     }
   },
-  mounted() {},
+  mounted() {
+    var role = this.$route.query.role
+    if (role === '1') {
+      this.registerForm.role = '学生'
+    } else if (role === '2') {
+      this.registerForm.role = '老师'
+    }
+  },
   methods: {
     setlocalStorage() {
       localStorage.setItem('name', this.loginForm.name)
@@ -94,34 +102,30 @@ export default {
         region: ''
       }
     },
-    login() {
-      this.$refs.loginFormRef.validate(async valid => {
-        if (!valid) return
-        await this.$http
-          .post('/teacher/login', this.loginForm)
-          .then(res => {
-            this.$message({
-              message: '登陆成功',
-              type: 'success'
-            })
-            if (this.checked) {
-              this.setlocalStorage()
-            } else {
-              localStorage.clear()
-            }
-            console.log(res.data)
-            window.sessionStorage.setItem('name', this.loginForm.name)
-            window.sessionStorage.setItem('level', res.data.user.authority)
-            this.$router.push('/upload')
-          })
-          // eslint-disable-next-line handle-callback-err
-          .catch(err => {
-            this.$message('登录失败')
-          })
-      })
-    },
     register() {
-      this.$router.push('/register')
+      var stuAuth = {
+        username: this.registerForm.name,
+        password: this.registerForm.password,
+        student_id_refer: this.registerForm.id
+      }
+      this.$http.post('/auth/register', stuAuth)
+        .then(res => {
+          console.log(res.data)
+          this.$message({
+            message: '注册成功',
+            type: 'success'
+          })
+          window.sessionStorage.setItem('name', this.registerForm.name)
+          window.sessionStorage.setItem('pwd', this.registerForm.password)
+          window.sessionStorage.setItem('role', '1')
+          this.$router.push('/student/uploadAudio')
+        })
+        .catch(() => {
+          this.$message({
+            message: '注册失败',
+            type: 'warning'
+          })
+        })
     }
   }
 }
@@ -149,7 +153,7 @@ export default {
 }
 .register-box {
   width: 600px;
-  height: 520px;
+  height: 500px;
   position: absolute;
   background-color: #d3d3d3;
   opacity: 0.85;

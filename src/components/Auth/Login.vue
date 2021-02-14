@@ -99,7 +99,7 @@ export default {
       loginFormRules: {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 4, max: 12, message: '长度在 4 到 12 个字符', trigger: 'blur' }
+          { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }
         ]
       },
       teachers: [],
@@ -111,52 +111,86 @@ export default {
     this.getlocalStorage()
   },
   methods: {
+    // 获取老师列表
     getTeachers() {
       var url = '/student/getTeachers'
       this.$http.get(url).then(result => {
         this.teachers = result.data.teachers
       })
     },
+    // 设置本地缓存
     setlocalStorage() {
       localStorage.setItem('name', this.loginForm.name)
       localStorage.setItem('pwd', this.loginForm.password)
     },
+    // 获取本地缓存
     getlocalStorage() {
       this.loginForm.name = localStorage.getItem('name')
       this.loginForm.password = localStorage.getItem('pwd')
     },
+    // 登录请求
     login() {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
-        await this.$http
-          .post('/teacher/login', this.loginForm)
-          .then(res => {
-            this.$message({
-              message: '登陆成功',
-              type: 'success'
+        if (this.role === '1') {
+          await this.$http
+            .post('/auth/login', this.loginForm)
+            .then(res => {
+              this.$message({
+                message: '登陆成功',
+                type: 'success'
+              })
+              if (this.checked) {
+                this.setlocalStorage()
+              } else {
+                localStorage.clear()
+              }
+              window.sessionStorage.setItem('name', this.loginForm.name)
+              window.sessionStorage.setItem('level', res.data.user.authority)
+              this.$router.push('/student/uploadAudio')
             })
-            if (this.checked) {
-              this.setlocalStorage()
-            } else {
-              localStorage.clear()
-            }
-            console.log(res.data)
-            window.sessionStorage.setItem('name', this.loginForm.name)
-            window.sessionStorage.setItem('level', res.data.user.authority)
-            this.$router.push('/upload')
-          })
-          // eslint-disable-next-line handle-callback-err
-          .catch(err => {
-            this.$message('登录失败')
-          })
+            // eslint-disable-next-line handle-callback-err
+            .catch(err => {
+              this.$message('登录失败')
+            })
+        } else if (this.role === '2') {
+          await this.$http
+            .post('/teacher/login', this.loginForm)
+            .then(res => {
+              this.$message({
+                message: '登陆成功',
+                type: 'success'
+              })
+              if (this.checked) {
+                this.setlocalStorage()
+              } else {
+                localStorage.clear()
+              }
+              window.sessionStorage.setItem('name', this.loginForm.name)
+              window.sessionStorage.setItem('level', res.data.user.authority)
+              this.$router.push('/upload')
+            })
+            // eslint-disable-next-line handle-callback-err
+            .catch(err => {
+              this.$message('登录失败')
+            })
+        }
       })
     },
+    // 注册页面跳转
     register() {
-      this.$router.push('/register')
+      this.$router.push({
+        path: '/register',
+        query: {
+          role: this.role
+        }
+      })
     },
+    // 更改密码跳转
     changePassword() {
       this.$router.push('/password')
     },
+    // 选择字词页面跳转
     skip() {
       this.$router.push('/select')
     }

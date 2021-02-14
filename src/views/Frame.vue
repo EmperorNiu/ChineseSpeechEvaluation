@@ -43,6 +43,7 @@ export default {
 }
 .el-header {
   background-color: #545c64;
+  padding: 0px;
   // display: flex;
   // padding-left: 15%;
   // justify-content: space-between;

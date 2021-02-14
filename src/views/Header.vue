@@ -48,11 +48,12 @@ export default {
   flex-direction: row;
 }
 .logo {
-  width: 44px;
-  height: 44px;
-  margin: 8px 20px 8px 5px;
+  width: 42px;
+  height: 42px;
+  margin: 8px 12px 8px 5px;
 }
 .title-text {
   margin-top: 20px;
+  margin-left: 15px;
 }
 </style>

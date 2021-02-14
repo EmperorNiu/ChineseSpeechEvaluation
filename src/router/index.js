@@ -6,6 +6,8 @@ import Frame2 from '../views/Frame2.vue'
 import Login from '../components/Auth/Login.vue'
 import ChangePassword from '../components/Auth/ChangePassword.vue'
 import Register from '../components/Auth/Register.vue'
+// Student
+import UploadAudio from '../components/Student/UploadAudio.vue'
 // Homework
 import Homework from '../components/homeworkEvaluation.vue'
 import Homework2 from '../components/homeworkEvaluation2.vue'
@@ -41,6 +43,21 @@ const routes = [
   {
     path: '/password',
     component: ChangePassword
+  },
+  {
+    path: '/student',
+    component: Frame,
+    redirect: '/student/uploadAudio',
+    children: [
+      { path: '/student/uploadAudio', component: UploadAudio },
+      { path: '/evaluation', component: Homework },
+      { path: '/evaluation2', component: Homework2 },
+      { path: '/homeworkresult', component: HomeworkResults },
+      // { path: '/select', component: Select },
+      // { path: '/selectedword', component: SelectedWord },
+      // { path: '/detail', component: SelectedDetail },
+      { path: '/dev', component: Dev }
+    ]
   },
   {
     path: '/upload',
