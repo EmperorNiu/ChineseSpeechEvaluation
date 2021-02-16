@@ -36,7 +36,6 @@
             action="http://47.103.83.192:8001/api/student/upload/audio"
             :data="{student_id:studentInfo.student_id,doc_id:selectHomework,type:1}"
             :auto-upload="false"
-            :on-success="successUpload"
           > -->
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
@@ -62,7 +61,6 @@
             action="http://47.103.83.192:8001/api/student/upload/audio"
             :data="{student_id:studentInfo.student_id,doc_id:selectHomework,type:2}"
             :auto-upload="false"
-            :on-success="successUpload"
           > -->
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
@@ -80,64 +78,145 @@
       <!-- 查看作业 -->
       <el-tab-pane label="查看我的作业" name="2" class="tab-main">
         <h3>我的作业列表</h3>
-        <!-- <div class="table-header">
-          <div class="table-header-title">我的作业列表</div>
-        </div> -->
         <el-table
-          :data="docList"
-          style="width: 50%"
+          :data="allHomework"
+          style="width: 80%"
         >
           <el-table-column prop="title" label="作业名称"></el-table-column>
           <el-table-column prop="describe" label="作业描述"></el-table-column>
+          <el-table-column prop="created_at" label="时间"></el-table-column>
+          <el-table-column prop="state" label="作业批改状态">未批改</el-table-column>
+          <el-table-column prop="state" label="评分">0</el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button @click="deleteHomework(scope.row.homework_doc_id)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="state" label="作业批改状态">未批改</el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button @click="deleteHomework(scope.row.homework_doc_id)" type="text" size="small">下载报告</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
       <!-- 个人信息 -->
       <el-tab-pane label="我的资料管理" name="3" class="tab-main">
         <h3>我的信息</h3>
-        <div class="upload-doc-main">
-          <div class="upload-doc-input-text">文件：</div>
-          <el-upload
-            class="upload-part"
-            ref="StudentListFile"
-            action="http://localhost:8001/api/student/upload/StudentList"
-            :auto-upload="false"
-            :on-success="successUpload"
+        <el-card style="width:88%; margin-left:5%;" v-if="isShow">
+          <el-form
+            :label-position="labelPosition"
+            label-width="100px"
+            :model="alumniForm"
+            size="small"
           >
-          <!-- <el-upload
-            class="upload-part"
-            ref="StudentListFile"
-            action="http://47.103.83.192:8001/api/student/upload/StudentList"
-            :auto-upload="false"
-          > -->
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <el-button
-              style="margin-left: 10px;"
-              size="small"
-              type="success"
-              @click="uploadStudentList"
-            >上传</el-button>
-            <div slot="tip" class="el-upload__tip">请参照模板xlsx文件上传</div>
-          </el-upload>
-        </div>
-        <h3>标准模板</h3>
-        <div>
-          <!-- <el-link href="http://47.103.83.192:8001/api/resource/studentListTemplate">
-            <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
-          </el-link> -->
-          <el-link href="http://localhost:8001/api/resource/studentListTemplate">
-            <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
-          </el-link>
-        </div>
-        <p>注：上传文件格式为xlsx，列名必须完全一致，且顺序相同，其他格式无要求</p>
-        <div style="width:100%;text-align:right;">
-          <el-button size="small" type="primary" @click="nextAddAudio">编辑我的信息</el-button>
-        </div>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="姓名: ">
+                  <el-input v-model="alumniForm.name"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="手机: ">
+                  <el-input v-model="alumniForm.phone" placeholder="选填"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="邮箱: ">
+                  <el-input v-model="alumniForm.mail" placeholder="选填"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="毕业去向: ">
+                  <el-input v-model="alumniForm.city" placeholder="去往哪个城市"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="升学/工作: ">
+                  <el-input v-model="alumniForm.type"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="公司: ">
+                  <el-input v-model="alumniForm.company"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="研究生院校: ">
+                  <el-input v-model="alumniForm.schoolP"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+          <el-row>
+            <el-col :span="6" :offset="20">
+              <el-button type="primary" @click="uploadCareer">提交</el-button>
+              <el-button type="success">重置</el-button>
+            </el-col>
+          </el-row>
+        </el-card>
+        <el-card style="width:88%; margin-left:5%;" v-if="!isShow">
+          <el-row>
+            <el-col :span="12">
+              <div class="info">
+                <div class="info-title">姓名: </div>
+                <div class="info-content">{{alumniInfo.name}}</div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <div class="info">
+                <div class="info-title">学号: </div>
+                <div class="info-content">{{alumniInfo.mail}}</div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <div class="info">
+                <div class="info-title">手机: </div>
+                <div class="info-content">{{alumniInfo.phone}}</div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <div class="info">
+                <div class="info-title">课堂派账号: </div>
+                <div class="info-content">{{alumniInfo.city}}</div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <div class="info">
+                <div class="info-title">老师: </div>
+                <div class="info-content">{{alumniInfo.type}}</div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <div class="info">
+                <div class="info-title">公司: </div>
+                <div class="info-content">{{alumniInfo.company}}</div>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="6" :offset="22">
+              <el-button type="primary" @click="modification">修改</el-button>
+            </el-col>
+          </el-row>
+        </el-card>
       </el-tab-pane>
     </el-tabs>
     <div class="loginOut">
@@ -151,13 +230,15 @@
 export default {
   mounted() {
     this.studentName = window.sessionStorage.getItem('name')
-    this.getDocs()
     this.getInfo()
+    // this.getAllHomework()
+    // this.getStudents()
   },
   data() {
     return {
       studentName: '',
       studentInfo: '',
+      allHomework: [],
       title: '',
       describe: '',
       teachers: [],
@@ -181,7 +262,26 @@ export default {
           value: 2,
           label: '常速朗读'
         }
-      ]
+      ],
+      alumniInfo: {
+        name: '牛悦安',
+        mail: 'niuyuean99@sina.com',
+        city: 'ktp0215702485',
+        phone: '13699309139',
+        type: '升学',
+        company: '无',
+        schoolP: '华东师范大学'
+      },
+      isShow: false,
+      alumniForm: {
+        name: '',
+        mail: '',
+        city: '',
+        phone: '',
+        type: '',
+        company: '',
+        schoolP: ''
+      }
     }
   },
   methods: {
@@ -190,6 +290,7 @@ export default {
       var url = '/student/getStudentByName?name=' + this.studentName
       this.$http.get(url).then((result) => {
         this.studentInfo = result.data.student
+        this.getAllHomework()
       })
     },
     // 上传学生列表
@@ -239,12 +340,40 @@ export default {
         this.docList = result.data.docs
       })
     },
+    getAllHomework() {
+      var url = '/student/getHomework?stu_id=' + this.studentInfo.student_id
+      this.$http.get(url).then((result) => {
+        var allHomework = result.data.homeworks
+        var tmp = []
+        // console.log(allHomework)
+        for (var i = 0; i < allHomework.length; i++) {
+          var w1 = {
+            title: allHomework[i].homework_doc.title,
+            describe: allHomework[i].homework_doc.describe,
+            created_at: this.formatTimeStr(allHomework[i].student_homework.created_at),
+            tone_accuracy: allHomework[i].result.tone_accuracy,
+            intonation_accuracy: allHomework[i].result.intonation_accuracy,
+            fluency: allHomework[i].result.fluency
+          }
+          tmp.push(w1)
+        }
+        this.allHomework = tmp
+      })
+    },
+    formatTimeStr(str) {
+      var time = new Date(str)
+      return time.getFullYear() + '-' + time.getMonth() + '-' + time.getDate()
+    },
     // 获取所有学生列表
     getStudents() {
-      var url = '/student/getAllStudent'
+      var url = '/student/getHomework?stu_id=' + this.studentInfo.student_id
       this.$http.get(url).then((result) => {
-        this.studentList = result.data.students
+        this.studentList = result.data.homeworks
       })
+    },
+    modification() {
+      this.isShow = true
+      this.alumniForm = this.alumniInfo
     },
     getTeachers() {
       var url = '/student/getTeachers'
@@ -275,7 +404,6 @@ export default {
       })
     },
     deleteHomework(id) {
-      console.log(id)
       var url = '/homework/deleteHomework?doc_id=' + id
       this.$http.get(url).then((result) => {
         this.getDocs()
@@ -392,5 +520,16 @@ export default {
   font-size: 16px;
   height: 35px;
   line-height: 35px;
+}
+.info {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+}
+.info-title {
+  font-weight: bold;
+  margin-right: 10px;
+}
+.info-content {
 }
 </style>

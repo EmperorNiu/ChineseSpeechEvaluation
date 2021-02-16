@@ -89,7 +89,7 @@ export default {
     },
     // 完成并上传批改
     finish() {
-      var url = '/student/homworkresult'
+      var url = '/student/homeworkResult'
       var pushData = {
         student_id_refer: this.stu_id,
         homework_doc_id_refer: parseInt(this.doc_id),

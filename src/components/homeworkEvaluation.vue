@@ -5,7 +5,7 @@
       <el-tab-pane label="字词训练" class="inner-card">
         <aplayer float :music="music1" class="audio-player" />
         <div class="container" style="margin-top:70px;">
-          <div class="word-group" v-for="item in dataInPage[currentPage-1]" :key="item.exercise_id">
+          <div class="word-group" v-for="(item, index) in dataInPage[currentPage-1]" :key="index">
             <div class="char-contain">
               <div class="char">
                 <el-popover placement="right" width="150" trigger="click">
@@ -457,14 +457,12 @@ export default {
               lrc: '[00:00.00]lrc here\n[00:01.00]aplayer'
             }
           }
-          // console.log(this.music1)
-          // console.log(this.music2)
         }
       })
     },
     // 完成并上传批改
     finish() {
-      var url = '/student/homworkresult'
+      var url = '/student/homeworkResult'
       var wordErr = []
       wordErr = wordErr.concat(
         this.dataInPage[0],
@@ -475,6 +473,7 @@ export default {
       var data = []
       var j = 0
       var k = 0
+      var errNum = 0
       // console.log(wordErr[1].checkedErrors0)
       for (var i = 0; i < wordErr.length; i++) {
         // console.log(wordErr[i])
@@ -482,6 +481,7 @@ export default {
         for (j = 0; j < wordErr[i].checkedErrors0.length; j++) {
           errs.push(wordErr[i].checkedErrors0[j].label)
         }
+        errNum += errs.length
         var w1 = {
           word: wordErr[i].character,
           studend_id_refer: this.stu_id,
@@ -493,6 +493,7 @@ export default {
           for (k = 0; k < wordErr[i].checkedErrors1[j].length; k++) {
             errs.push(wordErr[i].checkedErrors1[j][k].label)
           }
+          errNum += errs.length
           w1 = {
             word: wordErr[i].word1Split[j],
             studend_id_refer: this.stu_id,
@@ -506,6 +507,7 @@ export default {
           for (k = 0; k < wordErr[i].checkedErrors2[j].length; k++) {
             errs.push(wordErr[i].checkedErrors2[j][k].label)
           }
+          errNum += errs.length
           w1 = {
             word: wordErr[i].word2Split[j],
             studend_id_refer: this.stu_id,
@@ -523,8 +525,10 @@ export default {
         fluency: this.value3,
         word_errors: data,
         comment: this.comment,
-        is_thesis_express: 0
+        is_thesis_express: 0,
+        minus_word_error_score: errNum
       }
+      console.log(errNum)
       this.$http.post(url, pushData).then(result => {
         this.$message({
           message: '批改提交成功',
