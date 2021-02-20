@@ -4,7 +4,7 @@ import {
   Menu, MenuItem, MenuItemGroup, Submenu,
   Container, Header, Main, Aside,
   RadioGroup, Radio,
-  Breadcrumb, BreadcrumbItem, Card, Drawer,
+  Breadcrumb, BreadcrumbItem, Card, Drawer, Dialog,
   Tabs, TabPane, Upload, Select, Option, Collapse, CollapseItem,
   Autocomplete, Table, TableColumn, Popover, Checkbox, CheckboxGroup,
   Row, Col, Slider, Steps, Step, Link, Pagination, PageHeader
@@ -36,6 +36,7 @@ Vue.use(CollapseItem)
 Vue.use(Autocomplete)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Dialog)
 Vue.use(Popover)
 Vue.use(Checkbox)
 Vue.use(CheckboxGroup)

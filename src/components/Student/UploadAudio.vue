@@ -231,6 +231,7 @@ export default {
   mounted() {
     this.studentName = window.sessionStorage.getItem('name')
     this.getInfo()
+    this.getDocs()
     // this.getAllHomework()
     // this.getStudents()
   },
@@ -345,7 +346,6 @@ export default {
       this.$http.get(url).then((result) => {
         var allHomework = result.data.homeworks
         var tmp = []
-        // console.log(allHomework)
         for (var i = 0; i < allHomework.length; i++) {
           var w1 = {
             title: allHomework[i].homework_doc.title,
@@ -362,7 +362,7 @@ export default {
     },
     formatTimeStr(str) {
       var time = new Date(str)
-      return time.getFullYear() + '-' + time.getMonth() + '-' + time.getDate()
+      return time.getFullYear() + '-' + time.getMonth() + 1 + '-' + time.getDate()
     },
     // 获取所有学生列表
     getStudents() {

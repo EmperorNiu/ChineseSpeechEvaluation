@@ -1,3 +1,4 @@
+// 路由导航
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Frame from '../views/Frame.vue'
@@ -12,7 +13,7 @@ import UploadAudio from '../components/Student/UploadAudio.vue'
 import Homework from '../components/homeworkEvaluation.vue'
 import Homework2 from '../components/homeworkEvaluation2.vue'
 import HomeworkResults from '../components/HomeworkResults.vue'
-import Upload from '../components/uploadHomework.vue'
+import Upload from '../components/Teacher/uploadHomework.vue'
 import Select from '../components/SelectWord.vue'
 import SelectedWord from '../components/SelectedWord.vue'
 import SelectedDetail from '../components/SelectedDetail.vue'

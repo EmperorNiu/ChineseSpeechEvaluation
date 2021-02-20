@@ -1,7 +1,8 @@
+<!-- 教师上传学生作业，查看作业界面  -->
 <template>
   <div>
     <!-- 管理员权限界面 -->
-    <el-tabs v-model="activeTab" @tab-click="handleClick" type="border-card" v-show="level === '2'">
+    <el-tabs v-model="activeTab" type="border-card" v-show="level === '2'">
       <el-tab-pane label="上传作业doc文档" name="1">
         <div class="tab-main">
           <h3>上传文档</h3>
@@ -74,7 +75,6 @@
               v-model="selectStudent"
               placeholder="请选择"
               class="upload-audio-student-select"
-              @change="dubug"
               filterable
             >
               <el-option
@@ -299,7 +299,7 @@
       </el-tab-pane> -->
     </el-tabs>
     <!-- 普通权限界面 -->
-    <el-tabs v-model="activeTab" @tab-click="handleClick" type="border-card" v-show="level === '1'">
+    <el-tabs v-model="activeTab" type="border-card" v-show="level === '1'">
       <el-tab-pane label="上传学生音频" name="1">
         <div class="tab-main">
           <h3>上传音频</h3>
@@ -327,7 +327,6 @@
               v-model="selectStudent"
               placeholder="请选择"
               class="upload-audio-student-select"
-              @change="dubug"
             >
               <el-option
                 v-for="item in studentList"
@@ -395,23 +394,86 @@
           <el-button class="next" size="small" type="warning" @click="pushScore">开始打分</el-button>
         </div>
       </el-tab-pane>
+      <el-tab-pane label="待评分作业" name="2">
+        <div class="tab-main">
+          <h3>待评分作业列表</h3>
+          <el-table :data="unmarkedList" style="width: 90%;margin-left:5%;">
+            <el-table-column prop="student_id_refer" label="学号"></el-table-column>
+            <el-table-column prop="homework_name" label="作业名称"></el-table-column>
+            <el-table-column prop="created_at" label="上传日期"></el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button @click="toEvaluatePage(scope.row)" type="text" size="small">评分</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-tab-pane>
       <el-tab-pane label="查看学生作业" name="3">
-        <h3>我的学生列表</h3>
-        <el-table :data="studentList" style="width: 100%">
-          <el-table-column prop="student_id" label="学号"></el-table-column>
-          <el-table-column prop="name" label="姓名"></el-table-column>
-          <el-table-column prop="ke_tang_pai_account" label="课堂派账号"></el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button @click="seeHomework(scope.row)" type="text" size="small">查看作业</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div class="tab-main">
+          <h3>我的学生列表</h3>
+          <div style="width:100%;text-align: right">
+            <el-button @click="dialogFormVisible = true">添加学生</el-button>
+          </div>
+          <el-table :data="studentList" style="width: 94%;margin-left:3%;">
+            <el-table-column prop="student_id" label="学号"></el-table-column>
+            <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table-column prop="ke_tang_pai_account" label="课堂派账号"></el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button @click="seeHomework(scope.row)" type="text" size="small">查看作业</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </el-tab-pane>
     </el-tabs>
     <!-- <div class="eval" style="margin-top: 20px;">
       <el-button type="primary" round @click="evaluate">评估作业</el-button>
     </div>-->
+    <!-- 注销 -->
+    <div class="loginOut">
+      <span style="margin-right: 20px;margin-top:2px">{{"用户名：" + name}}</span>
+      <el-button type="warning" size='mini' @click="loginOut">登出</el-button>
+    </div>
+    <!-- 添加学生弹出界面 -->
+    <el-dialog title="添加学生" :visible.sync="dialogFormVisible">
+      <div style="margin-left: 30px;">
+        学号：
+        <el-autocomplete
+          v-model="addStuId"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="按学号搜索"
+          style="width:55%; margin-left:20px;"
+          @select="handleDialogSelect"
+        ></el-autocomplete>
+      </div>
+      <el-table
+        :data="dialogTable"
+        style="width: 100%">
+        <el-table-column
+          prop="value"
+          label="学号">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="姓名">
+        </el-table-column>
+        <el-table-column
+          prop="teacher"
+          label="老师">
+        </el-table-column>
+        <el-table-column label="删除">
+          <template slot-scope="scope">
+            <el-button @click="deleteDialogResult(scope.$index)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addMyStudent">添 加</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -420,16 +482,19 @@ export default {
   mounted() {
     // this.getTeachers()
     var teacher = window.sessionStorage.getItem('name')
+    this.name = teacher
     this.level = window.sessionStorage.getItem('level')
     this.getDocs()
     if (this.level === '1') {
-      this.getStudentByTeacher(teacher)
+      this.getStudentAndUnmarkHomeworkByTeacher(teacher)
     } else {
       this.getStudents()
     }
+    // this.getUnmarkedHomework()
   },
   data() {
     return {
+      name: '',
       level: 1,
       title: '',
       describe: '',
@@ -438,16 +503,19 @@ export default {
       selectHomework: '',
       selectTeacher: '',
       selectStudent: '',
+      unmarkedList: [],
       homeworkDocId: '',
       uploadData: {
         title: this.title,
         describe: this.describe
       },
+      addStuId: '',
       docList: [],
       studentList: [],
       activeTab: '1',
       audioType1: '',
       audioType2: '',
+      dialogFormVisible: false,
       audioOptions: [
         {
           value: 1,
@@ -482,7 +550,9 @@ export default {
           ketangpaiid2: 'ktp594699607',
           tphone_num: '18658157658'
         }
-      ]
+      ],
+      dialogTable: [],
+      formLabelWidth: '80px'
     }
   },
   methods: {
@@ -512,6 +582,50 @@ export default {
     submitUpload3() {
       this.$refs.upload3.submit()
     },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (state.student_id.toLowerCase().indexOf(queryString.toLowerCase()) !== -1)
+      }
+    },
+    // 查找学生
+    querySearchAsync(queryString, cb) {
+      var url = '/student/getAllStudent'
+      this.$http.get(url).then((result) => {
+        var data = result.data.students
+        var results = queryString ? data.filter(this.createStateFilter(queryString)) : data
+        console.log(results.map(a => a.student_id))
+        cb(results.map(function(a) { return { value: a.student_id, name: a.name, teacher: a.teacher } }))
+      })
+    },
+    handleDialogSelect(item) {
+      this.dialogTable.push(item)
+    },
+    deleteDialogResult(index) {
+      this.dialogTable.splice(index, 1)
+    },
+    // 添加自己的学生
+    addMyStudent() {
+      var url = 'teacher/addStudent'
+      var ids = this.dialogTable.map(a => a.value)
+      var pushData = {
+        ids: ids,
+        teacher: this.name
+      }
+      this.$http.post(url, pushData).then((result) => {
+        this.$message({
+          message: '添加成功',
+          type: 'success'
+        })
+        this.dialogFormVisible = false
+        this.getStudentAndUnmarkHomeworkByTeacher(this.name)
+      // eslint-disable-next-line handle-callback-err
+      }).catch((err) => {
+        this.$message({
+          message: '修改失败，此学生已有老师请核查',
+          type: 'warning'
+        })
+      })
+    },
     // 上传成功提示
     successUpload(res, file, files) {
       this.$refs.upload1.clearFiles()
@@ -528,6 +642,29 @@ export default {
     evaluate() {
       this.$router.push('/evaluation')
     },
+    // 跳转到评估界面
+    toEvaluatePage(row) {
+      if (!this.isfree) {
+        this.$router.push({
+          path: '/evaluation',
+          query: {
+            homework_doc_id: this.selectHomework,
+            student_id: this.selectStudent,
+            special: 0
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/evaluation2',
+          query: {
+            homework_doc_id: this.selectHomework,
+            student_id: this.selectStudent,
+            special: 0
+          }
+        })
+
+      }
+    },
     getDocs() {
       var url = '/homework/getDoc'
       this.$http.get(url).then((result) => {
@@ -541,18 +678,31 @@ export default {
         this.studentList = result.data.students
       })
     },
+    // 获取所有老师列表
     getTeachers() {
       var url = '/student/getTeachers'
       this.$http.get(url).then((result) => {
         this.teachers = result.data.teachers
       })
     },
-    getStudentByTeacher(teacher) {
+    // 获取老师的学生列表以及未评作业
+    getStudentAndUnmarkHomeworkByTeacher(teacher) {
       var url = '/student/getStudentByTeacher?teacher=' + teacher
       this.$http.get(url).then((result) => {
         this.studentList = result.data.students
-        // console.log(this.studentList)
+        var unmarkedList = result.data.unmark
+        var homeworks = result.data.homework
+        console.log(unmarkedList)
+        for (var i = 0; i < unmarkedList.length; i++) {
+          unmarkedList[i].created_at = this.formatTimeStr(unmarkedList[i].created_at)
+          unmarkedList[i].homework_name = homeworks[i].title
+        }
+        this.unmarkedList = unmarkedList
       })
+    },
+    formatTimeStr(str) {
+      var time = new Date(str)
+      return time.getFullYear() + '-' + time.getMonth() + 1 + '-' + time.getDate()
     },
     // 上传下一个学生音频，用于清空现有所有输入
     nextAddAudio() {
@@ -588,9 +738,7 @@ export default {
         }
       }
     },
-    debug() {
-      console.log(this.selectStudent)
-    },
+    // 上传作业
     secondHomework() {
       var url = 'homework/upload/review'
       var pushData = {
@@ -604,6 +752,7 @@ export default {
         })
       })
     },
+    // 查看作业结果
     seeHomework(x) {
       this.$router.push({
         path: '/homeworkresult',
@@ -613,8 +762,8 @@ export default {
         }
       })
     },
+    // 删除作业
     deleteHomework(id) {
-      console.log(id)
       var url = '/homework/deleteHomework?doc_id=' + id
       this.$http.get(url).then((result) => {
         this.getDocs()
@@ -623,6 +772,10 @@ export default {
     filterIdHandler(value, row, column) {
       const property = column.property
       return row[property] === value
+    },
+    // 登出
+    loginOut() {
+      this.$router.push('/login')
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 5 || columnIndex === 6 || columnIndex === 7 || columnIndex === 8) {
@@ -707,5 +860,15 @@ export default {
   margin-left: 55%;
   width: 30%;
   line-height: 50px;
+}
+.loginOut{
+  position: absolute;
+  right: 20px;
+  top: 12px;
+  color: #e6a23c;
+  font-weight: 600;
+  font-size: 16px;
+  height: 35px;
+  line-height: 35px;
 }
 </style>

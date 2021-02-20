@@ -1,3 +1,4 @@
+<!-- HomeworkResults.vue 教师查看学生作业结果界面 -->
 <template>
   <div>
     <el-page-header @back="goBack" :content="content"></el-page-header>
@@ -17,6 +18,9 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="bottom-note">
+      注：查看批改加载时间较长，请耐心等待
+    </div>
     <el-link :href="summary_url" class="bottom-btn">
       <el-button type="success">生成学生作业总结</el-button>
     </el-link>
@@ -107,7 +111,13 @@ export default {
 
 <style lang="less" scoped>
 .bottom-btn{
-  margin-top: 15px;
+  margin-top: 12px;
   margin-left: 88%
+}
+.bottom-note {
+  margin-top: 10px;
+  margin-left: 4%;
+  color: #696969;
+  size: 10px;
 }
 </style>
