@@ -16,22 +16,22 @@
           </div>
           <div class="upload-doc-main">
             <div class="upload-doc-input-text">文件：</div>
-            <el-upload
+            <!-- <el-upload
               class="upload-part"
               ref="upload1"
               action="http://localhost:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
-            <!-- <el-upload
+            > -->
+            <el-upload
               class="upload-part"
               ref="upload1"
               action="http://47.103.83.192:8001/api/homework/upload/doc"
               :data="{title:title,describe:describe}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -87,22 +87,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">字词训练音频/命题表达音频：</div>
-            <el-upload
+            <!-- <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
-            <!-- <el-upload
+            > -->
+            <el-upload
               class="audio-upload"
               ref="upload2"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -114,22 +114,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">课文朗读音频：</div>
-            <el-upload
+            <!-- <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://localhost:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            >
-            <!-- <el-upload
+            > -->
+            <el-upload
               class="audio-upload"
               ref="upload3"
               action="http://47.103.83.192:8001/api/student/upload/audio"
               :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
               :auto-upload="false"
               :on-success="successUpload"
-            > -->
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -185,19 +185,20 @@
         <h3>人员管理：添加学员及老师</h3>
         <div class="upload-doc-main">
           <div class="upload-doc-input-text">文件：</div>
-          <el-upload
+          <!-- <el-upload
             class="upload-part"
             ref="StudentListFile"
             action="http://localhost:8001/api/student/upload/StudentList"
             :auto-upload="false"
             :on-success="successUpload"
-          >
-          <!-- <el-upload
+          > -->
+          <el-upload
             class="upload-part"
             ref="StudentListFile"
             action="http://47.103.83.192:8001/api/student/upload/StudentList"
             :auto-upload="false"
-          > -->
+            :on-success="successUpload"
+          >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
               style="margin-left: 10px;"
@@ -252,12 +253,12 @@
           </el-table-column>
         </el-table>
         <div>
-          <!-- <el-link href="http://47.103.83.192:8001/api/resource/studentListTemplate">
-            <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
-          </el-link> -->
-          <el-link href="http://localhost:8001/api/resource/studentListTemplate">
+          <el-link href="http://47.103.83.192:8001/api/resource/studentListTemplate">
             <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
           </el-link>
+          <!-- <el-link href="http://localhost:8001/api/resource/studentListTemplate">
+            <el-button type="success" size="small" style="margin-left:35px; margin-top:30px">下载模板样例</el-button>
+          </el-link> -->
         </div>
         <p>注：上传文件格式为xlsx，列名必须完全一致，且顺序相同，其他格式无要求</p>
       </el-tab-pane>
@@ -318,7 +319,7 @@
               ></el-option>
             </el-select>
             <div class="upload-doc-input-text" style="margin-left:30px">
-              <el-checkbox v-model="isfree">是否是命题表达</el-checkbox>
+              <el-checkbox v-model="isfree" true-label='1' false-label='0'>是否是命题表达</el-checkbox>
             </div>
           </div>
           <div class="upload-audio-student">
@@ -338,22 +339,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">字词训练音频/命题表达音频：</div>
-            <el-upload
-              class="audio-upload"
-              ref="upload2"
-              action="http://localhost:8001/api/student/upload/audio"
-              :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
-              :auto-upload="false"
-              :on-success="successUpload"
-            >
             <!-- <el-upload
               class="audio-upload"
               ref="upload2"
-              action="http://47.103.83.192:8001/api/student/upload/audio"
-              :data="{student_id:selectStudent,doc_id:selectHomework,type:1}"
+              action="http://localhost:8001/api/student/upload/audio"
+              :data="{student_id:selectStudent,doc_id:selectHomework,type:1, is_thesis_express:isfree}"
               :auto-upload="false"
               :on-success="successUpload"
             > -->
+            <el-upload
+              class="audio-upload"
+              ref="upload2"
+              action="http://47.103.83.192:8001/api/student/upload/audio"
+              :data="{student_id:selectStudent,doc_id:selectHomework,type:1, is_thesis_express:isfree}"
+              :auto-upload="false"
+              :on-success="successUpload"
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -365,22 +366,22 @@
           </div>
           <div class="upload-audio-contain">
             <div class="upload-doc-input-text">课文朗读音频：</div>
-            <el-upload
-              class="audio-upload"
-              ref="upload3"
-              action="http://localhost:8001/api/student/upload/audio"
-              :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
-              :auto-upload="false"
-              :on-success="successUpload"
-            >
             <!-- <el-upload
               class="audio-upload"
               ref="upload3"
-              action="http://47.103.83.192:8001/api/student/upload/audio"
-              :data="{student_id:selectStudent,doc_id:selectHomework,type:2}"
+              action="http://localhost:8001/api/student/upload/audio"
+              :data="{student_id:selectStudent,doc_id:selectHomework,type:2, is_thesis_express:isfree}"
               :auto-upload="false"
               :on-success="successUpload"
             > -->
+            <el-upload
+              class="audio-upload"
+              ref="upload3"
+              action="http://47.103.83.192:8001/api/student/upload/audio"
+              :data="{student_id:selectStudent,doc_id:selectHomework,type:2, is_thesis_express:isfree}"
+              :auto-upload="false"
+              :on-success="successUpload"
+            >
               <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
@@ -498,7 +499,7 @@ export default {
       level: 1,
       title: '',
       describe: '',
-      isfree: false,
+      isfree: '0',
       teachers: [],
       selectHomework: '',
       selectTeacher: '',
@@ -644,12 +645,12 @@ export default {
     },
     // 跳转到评估界面
     toEvaluatePage(row) {
-      if (!this.isfree) {
+      if (this.isfree === '0') {
         this.$router.push({
           path: '/evaluation',
           query: {
-            homework_doc_id: this.selectHomework,
-            student_id: this.selectStudent,
+            homework_doc_id: row.homework_doc_id_refer,
+            student_id: row.student_id_refer,
             special: 0
           }
         })
@@ -657,12 +658,11 @@ export default {
         this.$router.push({
           path: '/evaluation2',
           query: {
-            homework_doc_id: this.selectHomework,
-            student_id: this.selectStudent,
+            homework_doc_id: row.homework_doc_id_refer,
+            student_id: row.student_id_refer,
             special: 0
           }
         })
-
       }
     },
     getDocs() {
@@ -692,7 +692,7 @@ export default {
         this.studentList = result.data.students
         var unmarkedList = result.data.unmark
         var homeworks = result.data.homework
-        console.log(unmarkedList)
+        // console.log(unmarkedList)
         for (var i = 0; i < unmarkedList.length; i++) {
           unmarkedList[i].created_at = this.formatTimeStr(unmarkedList[i].created_at)
           unmarkedList[i].homework_name = homeworks[i].title
@@ -710,14 +710,14 @@ export default {
       this.$refs.upload3.clearFiles()
       this.selectHomework = ''
       this.selectStudent = ''
-      this.isfree = false
+      this.isfree = 0
     },
     // 跳转到评分界面
     pushScore() {
       if (this.selectHomework === '' || this.selectStudent === '') {
         this.$message.error('请填写评分对象')
       } else {
-        if (!this.isfree) {
+        if (this.isfree === '0') {
           this.$router.push({
             path: '/evaluation',
             query: {

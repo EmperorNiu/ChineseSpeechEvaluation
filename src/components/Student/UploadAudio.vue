@@ -20,23 +20,26 @@
               :value="item.homework_doc_id"
             ></el-option>
           </el-select>
+          <div class="upload-doc-input-text" style="margin-left:30px">
+            <el-checkbox v-model="isfree" true-label='1' false-label='0'>是否是命题表达</el-checkbox>
+          </div>
         </div>
         <div class="upload-audio-contain">
           <div class="upload-doc-input-text">字词训练音频/命题表达音频：</div>
-          <el-upload
-            class="audio-upload"
-            ref="upload1"
-            action="http://localhost:8001/api/student/upload/audio"
-            :data="{student_id:studentInfo.student_id, doc_id:selectHomework, type:1}"
-            :auto-upload="false"
-          >
           <!-- <el-upload
             class="audio-upload"
             ref="upload1"
-            action="http://47.103.83.192:8001/api/student/upload/audio"
-            :data="{student_id:studentInfo.student_id,doc_id:selectHomework,type:1}"
+            action="http://localhost:8001/api/student/upload/audio"
+            :data="{student_id:studentInfo.student_id, doc_id:selectHomework, type:1, is_thesis_express:isfree}"
             :auto-upload="false"
           > -->
+          <el-upload
+            class="audio-upload"
+            ref="upload1"
+            action="http://47.103.83.192:8001/api/student/upload/audio"
+            :data="{student_id:studentInfo.student_id,doc_id:selectHomework,type:1, is_thesis_express:isfree}"
+            :auto-upload="false"
+          >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
               style="margin-left: 10px;"
@@ -48,20 +51,20 @@
         </div>
         <div class="upload-audio-contain">
           <div class="upload-doc-input-text">课文朗读音频：</div>
-          <el-upload
-            class="audio-upload"
-            ref="upload2"
-            action="http://localhost:8001/api/student/upload/audio"
-            :data="{student_id:studentInfo.student_id,doc_id:selectHomework, type:2}"
-            :auto-upload="false"
-          >
           <!-- <el-upload
             class="audio-upload"
             ref="upload2"
-            action="http://47.103.83.192:8001/api/student/upload/audio"
-            :data="{student_id:studentInfo.student_id,doc_id:selectHomework,type:2}"
+            action="http://localhost:8001/api/student/upload/audio"
+            :data="{student_id:studentInfo.student_id,doc_id:selectHomework, type:2, is_thesis_express:isfree}"
             :auto-upload="false"
           > -->
+          <el-upload
+            class="audio-upload"
+            ref="upload2"
+            action="http://47.103.83.192:8001/api/student/upload/audio"
+            :data="{student_id:studentInfo.student_id,doc_id:selectHomework,type:2, is_thesis_express:isfree}"
+            :auto-upload="false"
+          >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
               style="margin-left: 10px;"
@@ -85,16 +88,16 @@
           <el-table-column prop="title" label="作业名称"></el-table-column>
           <el-table-column prop="describe" label="作业描述"></el-table-column>
           <el-table-column prop="created_at" label="时间"></el-table-column>
-          <el-table-column prop="state" label="作业批改状态">未批改</el-table-column>
+          <el-table-column prop="is_mark" label="作业批改状态"></el-table-column>
           <el-table-column prop="state" label="评分">0</el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="deleteHomework(scope.row.homework_doc_id)" type="text" size="small">删除</el-button>
+              <el-button @click="deleteHomework(scope.row)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button @click="deleteHomework(scope.row.homework_doc_id)" type="text" size="small">下载报告</el-button>
+              <el-button @click="downloadReport(scope.$index)" type="text" size="small">下载报告</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -125,39 +128,15 @@
             </el-row>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="邮箱: ">
-                  <el-input v-model="alumniForm.mail" placeholder="选填"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="毕业去向: ">
-                  <el-input v-model="alumniForm.city" placeholder="去往哪个城市"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="升学/工作: ">
-                  <el-input v-model="alumniForm.type"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="公司: ">
-                  <el-input v-model="alumniForm.company"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="研究生院校: ">
-                  <el-input v-model="alumniForm.schoolP"></el-input>
+                <el-form-item label="课堂派账号: ">
+                  <el-input v-model="alumniForm.keTangPai" placeholder="选填"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
           <el-row>
             <el-col :span="6" :offset="20">
-              <el-button type="primary" @click="uploadCareer">提交</el-button>
+              <el-button type="primary" @click="updateStudentInfo">提交</el-button>
               <el-button type="success">重置</el-button>
             </el-col>
           </el-row>
@@ -175,7 +154,7 @@
             <el-col :span="12">
               <div class="info">
                 <div class="info-title">学号: </div>
-                <div class="info-content">{{alumniInfo.mail}}</div>
+                <div class="info-content">{{alumniInfo.stuId}}</div>
               </div>
             </el-col>
           </el-row>
@@ -191,7 +170,7 @@
             <el-col :span="12">
               <div class="info">
                 <div class="info-title">课堂派账号: </div>
-                <div class="info-content">{{alumniInfo.city}}</div>
+                <div class="info-content">{{alumniInfo.keTangPai}}</div>
               </div>
             </el-col>
           </el-row>
@@ -199,15 +178,7 @@
             <el-col :span="12">
               <div class="info">
                 <div class="info-title">老师: </div>
-                <div class="info-content">{{alumniInfo.type}}</div>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <div class="info">
-                <div class="info-title">公司: </div>
-                <div class="info-content">{{alumniInfo.company}}</div>
+                <div class="info-content">{{alumniInfo.teacher}}</div>
               </div>
             </el-col>
           </el-row>
@@ -243,6 +214,7 @@ export default {
       title: '',
       describe: '',
       teachers: [],
+      isfree: 0,
       selectHomework: '',
       selectTeacher: '',
       selectStudent: '',
@@ -265,23 +237,19 @@ export default {
         }
       ],
       alumniInfo: {
-        name: '牛悦安',
-        mail: 'niuyuean99@sina.com',
-        city: 'ktp0215702485',
+        name: 'Test Stu',
+        stuId: 'JC101',
+        keTangPai: 'ktp0215702485',
         phone: '13699309139',
-        type: '升学',
-        company: '无',
-        schoolP: '华东师范大学'
+        teacher: 'Test Teacher'
       },
       isShow: false,
       alumniForm: {
         name: '',
-        mail: '',
-        city: '',
+        stuId: '',
+        keTangPai: '',
         phone: '',
-        type: '',
-        company: '',
-        schoolP: ''
+        teacher: ''
       }
     }
   },
@@ -291,7 +259,32 @@ export default {
       var url = '/student/getStudentByName?name=' + this.studentName
       this.$http.get(url).then((result) => {
         this.studentInfo = result.data.student
+        this.alumniInfo = {
+          name: result.data.student.name,
+          stuId: result.data.student.student_id,
+          teacher: result.data.student.teacher,
+          keTangPai: result.data.student.ke_tang_pai_account,
+          phone: result.data.student.phone_number
+        }
         this.getAllHomework()
+      })
+    },
+    // 更新学生信息
+    updateStudentInfo() {
+      var url = '/student/updateInfo'
+      var pushData = {
+        student_id: this.alumniInfo.stuId,
+        name: this.alumniForm.name,
+        teacher: this.alumniInfo.teacher,
+        ke_tang_pai_account: this.alumniForm.keTangPai,
+        phone_number: this.alumniForm.phone
+      }
+      this.$http.post(url, pushData).then((result) => {
+        this.$message({
+          message: '信息更新成功',
+          type: 'success'
+        })
+        this.isShow = !this.isShow
       })
     },
     // 上传学生列表
@@ -341,19 +334,38 @@ export default {
         this.docList = result.data.docs
       })
     },
+    downloadReport(row) {
+      if (this.allHomework[row].is_mark === '未批改') {
+        this.$message({
+          message: '作业尚未批改',
+          type: 'warning'
+        })
+      } else {
+        var url = this.allHomework[row].is_thesis_express === 0 ? '/homework/getReport' : '/homework/getReport2'
+        url += '?stu_id=' + this.studentInfo.student_id + '&doc_id=' + this.allHomework[row].doc_id
+        // url += '?stu_id=PS002&doc_id=1'
+        // this.$http.get(url)
+        // window.location.href = 'http://localhost:8001/api' + url
+        window.location.href = 'http://47.103.83.192:8001/api' + url
+      }
+    },
     getAllHomework() {
       var url = '/student/getHomework?stu_id=' + this.studentInfo.student_id
       this.$http.get(url).then((result) => {
         var allHomework = result.data.homeworks
         var tmp = []
-        for (var i = 0; i < allHomework.length; i++) {
+        for (var i = allHomework.length - 1; i >= 0; i--) {
           var w1 = {
             title: allHomework[i].homework_doc.title,
             describe: allHomework[i].homework_doc.describe,
             created_at: this.formatTimeStr(allHomework[i].student_homework.created_at),
             tone_accuracy: allHomework[i].result.tone_accuracy,
             intonation_accuracy: allHomework[i].result.intonation_accuracy,
-            fluency: allHomework[i].result.fluency
+            fluency: allHomework[i].result.fluency,
+            is_mark: allHomework[i].student_homework.is_mark === 1 ? '已批改' : '未批改',
+            is_thesis_express: allHomework[i].result.is_thesis_express,
+            doc_id: allHomework[i].homework_doc.homework_doc_id,
+            student_homework_id: allHomework[i].student_homework.student_homework_id
           }
           tmp.push(w1)
         }
@@ -403,11 +415,18 @@ export default {
         }
       })
     },
-    deleteHomework(id) {
-      var url = '/homework/deleteHomework?doc_id=' + id
-      this.$http.get(url).then((result) => {
-        this.getDocs()
-      })
+    deleteHomework(x) {
+      if (x.is_mark === '未批改') {
+        var url = '/student/deleteStudentHomework?student_homework_id=' + x.student_homework_id
+        this.$http.get(url).then((result) => {
+          this.getAllHomework()
+        })
+      } else {
+        this.$message({
+          message: '已批改作业不能删除',
+          type: 'warning'
+        })
+      }
     },
     filterIdHandler(value, row, column) {
       const property = column.property
