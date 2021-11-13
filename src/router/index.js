@@ -8,15 +8,24 @@ import Login from '../components/Auth/Login.vue'
 import ChangePassword from '../components/Auth/ChangePassword.vue'
 import Register from '../components/Auth/Register.vue'
 // Student
-import UploadAudio from '../components/Student/UploadAudio.vue'
+import UploadAudio from '../components/Student/StudentMain.vue'
+// Teacher
+import Upload from '../components/Teacher/TeacherMain.vue'
+import Admin from '../components/Teacher/AdminMain.vue'
+import HomeworkResults from '../components/Teacher/HomeworkResults.vue'
 // Homework
 import Homework from '../components/homeworkEvaluation.vue'
 import Homework2 from '../components/homeworkEvaluation2.vue'
-import HomeworkResults from '../components/HomeworkResults.vue'
-import Upload from '../components/Teacher/uploadHomework.vue'
-import Select from '../components/SelectWord.vue'
-import SelectedWord from '../components/SelectedWord.vue'
-import SelectedDetail from '../components/SelectedDetail.vue'
+
+// Analysis
+import AnalysisMain from '../components/Analysis/AnalysisMain.vue'
+import AnalysisDetail from '../components/Analysis/AnalysisDetail.vue'
+import AnalysisHomeworkResult from '../components/Analysis/AnalysisHomeworkResult.vue'
+// Select
+import Select from '../components/Select/SelectWord.vue'
+import SelectedWord from '../components/Select/SelectedWord.vue'
+import SelectedDetail from '../components/Select/SelectedDetail.vue'
+// Others
 import Dev from '../components/Dev.vue'
 import Entry from '../views/entry.vue'
 Vue.use(VueRouter)
@@ -32,6 +41,7 @@ const routes = [
   },
   {
     path: '/login',
+    name: 'login',
     component: Login,
     meta: {
       title: '首页'
@@ -39,6 +49,7 @@ const routes = [
   },
   {
     path: '/register',
+    name: 'register',
     component: Register
   },
   {
@@ -66,6 +77,7 @@ const routes = [
     redirect: '/upload',
     children: [
       { path: '/upload', component: Upload },
+      { path: '/admin', component: Admin },
       { path: '/evaluation', component: Homework },
       { path: '/evaluation2', component: Homework2 },
       { path: '/homeworkresult', component: HomeworkResults },
@@ -77,6 +89,7 @@ const routes = [
   },
   {
     path: '/select',
+    name: 'select',
     component: Frame2,
     redirect: '/selcet',
     children: [
@@ -85,11 +98,32 @@ const routes = [
       { path: '/detail', component: SelectedDetail }
       // { path: '/dev', component: Dev }
     ]
+  },
+  {
+    path: '/analysis',
+    name: 'analysis',
+    component: AnalysisMain
+  },
+  {
+    path: '/analysisDetail',
+    name: 'analysisDetail',
+    component: AnalysisDetail
+  },
+  {
+    path: '/analysisHomeworkResult',
+    name: 'analysisHomeworkResult',
+    component: AnalysisHomeworkResult
   }
 ]
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  var safePaths = ['register', 'login', 'analysis', 'select', 'password', 'analysisDetail', 'analysisHomeworkResult']
+  if ((!safePaths.includes(to.name)) && !window.sessionStorage.getItem('isAuthenticated')) next({ name: 'login' })
+  else next()
 })
 
 export default router

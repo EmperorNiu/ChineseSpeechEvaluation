@@ -19,11 +19,11 @@
       </el-table-column>
     </el-table>
     <div class="bottom-note">
-      注：查看批改加载时间较长，请耐心等待
+      注：查看批改和删除批改处理时间较长，请耐心等待。尤其删除批改不要多次点击造成误删。
     </div>
-    <el-link :href="summary_url" class="bottom-btn">
+    <!-- <el-link :href="summary_url" class="bottom-btn">
       <el-button type="success">生成学生作业总结</el-button>
-    </el-link>
+    </el-link> -->
   </div>
 </template>
 

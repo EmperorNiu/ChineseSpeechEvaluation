@@ -130,7 +130,7 @@ export default {
       var result = this.$route.query.result_id
       var url1 = '/student/getHomeworkResultScore?result_id=' + result
       await this.$http.get(url1).then(result => {
-        console.log(result.data)
+        // console.log(result.data)
         var data = result.data.result
         this.value1 = data.tone_accuracy
         this.value2 = data.intonation_accuracy

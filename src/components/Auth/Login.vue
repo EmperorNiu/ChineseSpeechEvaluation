@@ -1,14 +1,20 @@
 <!-- 登录界面 -->
 <template>
   <div class="login-container">
-    <!-- 顶部跳转 -->
-    <div class="skip">
-      <el-button type="text" @click="skip" style="color:white">作业选词</el-button>
+    <!-- 顶部 -->
+    <div class="top-area">
+      <!-- <img src="../../assets/badge.png" class="logo"> -->
+      <p class="title-text">国家通用语言语音学习分析系统</p>
+      <div class="skip">
+        <el-button type="text" @click="skip2" style="color:white" size="mini">语音语料检索</el-button>
+        <el-button type="text" @click="skip" style="color:white" size="mini">作业选词</el-button>
+      </div>
     </div>
+
     <!-- 身份登录按钮组 -->
     <div class="login-box" v-show="role === '0'">
       <!-- 标题 -->
-      <div class="title">选择身份登录</div>
+      <div class="title2">选择身份登录</div>
       <!-- 身份登录按钮组 -->
       <el-row class="roleBtns">
         <el-col :span="12" style="text-align:center;">
@@ -21,6 +27,10 @@
     </div>
     <!-- 学生登录 -->
     <div class="login-box" v-show="role === '1'">
+      <!-- 顶部返回 -->
+      <div style="margin-left:20px; margin-top:18px; color:rgb(44, 111, 255);">
+        <el-button type="text" @click="role='0'">&lt; 返回</el-button>
+      </div>
       <!-- 标题 -->
       <div class="title">学生登录</div>
       <!-- 表单区域 -->
@@ -32,7 +42,7 @@
         ref="loginFormRef"
       >
         <el-form-item prop="username">
-          <el-input placeholder="用户名" type="text" v-model="loginForm.name"></el-input>
+          <el-input placeholder="学号" type="text" v-model="loginForm.name"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input placeholder="请输入密码" type="password" v-model="loginForm.password"></el-input>
@@ -47,6 +57,10 @@
     </div>
     <!-- 老师登录 -->
     <div class="login-box" v-show="role === '2'">
+      <!-- 顶部返回 -->
+      <div style="margin-left:20px; margin-top:18px; color:rgb(44, 111, 255);">
+        <el-button type="text" @click="role='0'">&lt; 返回</el-button>
+      </div>
       <!-- 标题 -->
       <div class="title">作业评测老师登录</div>
       <!-- 表单区域 -->
@@ -63,7 +77,6 @@
             placeholder="用户名"
             class="teacher-select"
             filterable
-            @change="getStudentByTeacher"
           >
             <el-option
               v-for="item in teachers"
@@ -113,7 +126,7 @@ export default {
   methods: {
     // 获取老师列表
     getTeachers() {
-      var url = '/student/getTeachers'
+      var url = '/teacher/getTeachers'
       this.$http.get(url).then(result => {
         this.teachers = result.data.teachers
       })
@@ -133,8 +146,13 @@ export default {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
         if (this.role === '1') {
+          // 学生登录
+          var stu = {
+            student_id_refer: this.loginForm.name,
+            password: this.loginForm.password
+          }
           await this.$http
-            .post('/auth/login', this.loginForm)
+            .post('/auth/login', stu)
             .then(res => {
               this.$message({
                 message: '登陆成功',
@@ -145,8 +163,9 @@ export default {
               } else {
                 localStorage.clear()
               }
-              window.sessionStorage.setItem('name', this.loginForm.name)
-              window.sessionStorage.setItem('level', res.data.user.authority)
+              window.sessionStorage.setItem('id', res.data.user.student_id_refer)
+              window.sessionStorage.setItem('name', res.data.user.username)
+              window.sessionStorage.setItem('isAuthenticated', 1)
               this.$router.push('/student/uploadAudio')
             })
             // eslint-disable-next-line handle-callback-err
@@ -154,6 +173,7 @@ export default {
               this.$message('登录失败')
             })
         } else if (this.role === '2') {
+          // 老师登录
           await this.$http
             .post('/teacher/login', this.loginForm)
             .then(res => {
@@ -167,8 +187,13 @@ export default {
                 localStorage.clear()
               }
               window.sessionStorage.setItem('name', this.loginForm.name)
+              window.sessionStorage.setItem('isAuthenticated', 1)
               window.sessionStorage.setItem('level', res.data.user.authority)
-              this.$router.push('/upload')
+              if (res.data.user.authority === 1) {
+                this.$router.push('/upload')
+              } else {
+                this.$router.push('/admin')
+              }
             })
             // eslint-disable-next-line handle-callback-err
             .catch(err => {
@@ -188,19 +213,42 @@ export default {
     },
     // 更改密码跳转
     changePassword() {
-      this.$router.push('/password')
+      this.$router.push({
+        path: '/password',
+        query: {
+          role: this.role
+        }
+      })
     },
     // 选择字词页面跳转
     skip() {
       this.$router.push('/select')
+    },
+    skip2() {
+      this.$router.push('/analysis')
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.top-area {
+  color: whitesmoke;
+  display: flex;
+  flex-direction: row;
+}
+.logo {
+  width: 42px;
+  height: 42px;
+  margin: 10px 10px 10px 15px;
+}
+.title-text {
+  margin-top: 20px;
+  margin-left: 15px;
+}
 .skip {
-  margin-left: 95%;
+  margin-top: 10px;
+  margin-left: 70%;
   color: white;
 }
 .login-container {
@@ -223,7 +271,7 @@ export default {
 }
 .login-box {
   width: 500px;
-  height: 360px;
+  height: 380px;
   position: absolute;
   background-color: #d3d3d3;
   opacity: 0.85;
@@ -253,7 +301,13 @@ export default {
 }
 .title {
   text-align: center;
-  margin-top: 50px;
+  margin-top: 25px;
+  font-size: 40px;
+  color: rgb(44, 111, 255);
+}
+.title2 {
+  text-align: center;
+  margin-top: 70px;
   font-size: 40px;
   color: rgb(44, 111, 255);
 }

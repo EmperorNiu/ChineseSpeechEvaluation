@@ -3,7 +3,7 @@ import {
   Button, Form, FormItem, Input, Message,
   Menu, MenuItem, MenuItemGroup, Submenu,
   Container, Header, Main, Aside,
-  RadioGroup, Radio,
+  RadioGroup, Radio, Loading,
   Breadcrumb, BreadcrumbItem, Card, Drawer, Dialog,
   Tabs, TabPane, Upload, Select, Option, Collapse, CollapseItem,
   Autocomplete, Table, TableColumn, Popover, Checkbox, CheckboxGroup,
@@ -50,4 +50,5 @@ Vue.use(Step)
 Vue.use(Link)
 Vue.use(Pagination)
 Vue.use(PageHeader)
+Vue.use(Loading)
 Vue.prototype.$message = Message

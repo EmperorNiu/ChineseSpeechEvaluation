@@ -4,9 +4,9 @@
       <myheader class="myheader"></myheader>
     </el-header>
     <el-container class="main-frame">
-      <el-aside :width="isCollapse ? '50px' : '200px'">
+      <!-- <el-aside :width="isCollapse ? '50px' : '200px'">
         <div class="toggle-button" @click="toggleCollapse">|||</div>
-      </el-aside>
+      </el-aside> -->
       <el-main>
         <router-view></router-view>
       </el-main>

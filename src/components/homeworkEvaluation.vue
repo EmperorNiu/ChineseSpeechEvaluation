@@ -207,6 +207,9 @@
           <el-button type="primary" round @click="finish">完成批改</el-button>
           <el-link type="success" :href="r" class="download">生成报告</el-link>
         </div>
+        <div>
+          <p>注意：如要生成报告，先点击完成批改！</p>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -295,7 +298,7 @@ export default {
         // 获取文章朗读评分和评语
         var url1 = '/student/getHomeworkResultScore?result_id=' + result
         await this.$http.get(url1).then(result => {
-          console.log(result.data)
+          // console.log(result.data)
           var data = result.data.result
           this.value1 = data.tone_accuracy
           this.value2 = data.intonation_accuracy
@@ -311,7 +314,7 @@ export default {
         await this.$http.get(url).then(result => {
           var tmp = result.data.errors
           var i = 0
-          console.log('length: ', tmp.length)
+          // console.log('length: ', tmp.length)
           while (i < tmp.length) {
             var tmp2 = {}
             // 字
@@ -528,7 +531,7 @@ export default {
         is_thesis_express: 0,
         minus_word_error_score: errNum
       }
-      console.log(errNum)
+      // console.log(errNum)
       this.$http.post(url, pushData).then(result => {
         this.$message({
           message: '批改提交成功',
@@ -549,7 +552,7 @@ export default {
     },
     // 弃用
     report() {
-      console.log(this.finishFlag)
+      // console.log(this.finishFlag)
       if (this.finishFlag === 0) {
         var url =
           '/homework/getReport?stu_id=' + this.stu_id + '&doc_id=' + this.doc_id

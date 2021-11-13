@@ -106,10 +106,10 @@
 </template>
 
 <script>
-var pinyin = require('pinyin')
-console.log(pinyin('中心', {
-  heteronym: true// 启用多音字模式
-}))
+// var pinyin = require('pinyin')
+// console.log(pinyin('中心', {
+//   heteronym: true// 启用多音字模式
+// }))
 export default {
   data() {
     return {
@@ -161,10 +161,10 @@ export default {
       var url = '/word/query?word=' + this.wordContent + '&type=' + this.select
       await this.$http.get(url).then(result => {
         var tmp = result.data.result
-        console.log(tmp.length)
+        // console.log(tmp.length)
         var i
         for (i = 0; i < tmp.length; i++) {
-          console.log(i)
+          // console.log(i)
           var t = tmp[i]
           if (t.is_common === '是') {
             t.is_common = '常用'
@@ -176,7 +176,7 @@ export default {
     tmpFun(t) {
       var url = '/sheet/getWordHistory?word=' + t.word
       this.$http.get(url).then(result => {
-        console.log(t)
+        // console.log(t)
         if (result.data.sheets != null) {
           t.nf = result.data.sheets.length
         } else {
@@ -206,7 +206,6 @@ export default {
         })
         // eslint-disable-next-line handle-callback-err
         .catch(err => {
-          console.log('err')
           this.drawer = false
         })
     },

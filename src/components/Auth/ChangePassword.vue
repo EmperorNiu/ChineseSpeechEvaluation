@@ -4,20 +4,23 @@
       <div class="title">更改密码</div>
       <!-- 表单区域 -->
       <el-form
-        label-width="0"
+        label-width="20"
         class="login_form"
         :model="passwordForm"
-        :rules="loginFormRules"
-        ref="loginFormRef"
+        :rules="passwordFormRules"
+        ref="passwordForm"
       >
-        <el-form-item prop="password">
+        <el-form-item label="姓名" prop="name">
+          <el-input placeholder="请输入姓名" v-model="passwordForm.name"></el-input>
+        </el-form-item>
+        <el-form-item prop="password" label="原密码">
           <el-input placeholder="请输入原密码" type="password" v-model="passwordForm.password"></el-input>
         </el-form-item>
-        <el-form-item prop="newPassword">
-          <el-input placeholder="请输入新密码" type="password" v-model="passwordForm.newPassword"></el-input>
+        <el-form-item prop="newPassword"  label="新密码">
+          <el-input type="password" v-model="passwordForm.newPassword"></el-input>
         </el-form-item>
-        <el-form-item prop="newPasswordAgain">
-          <el-input placeholder="请再次输入新密码" type="password" v-model="passwordForm.newPasswordAgain"></el-input>
+        <el-form-item prop="newPasswordAgain"  label="再次输入新密码">
+          <el-input type="password" v-model="passwordForm.newPasswordAgain"></el-input>
         </el-form-item>
         <el-form-item class="btns">
           <el-button type="warning" round @click="changePassword">完成更改</el-button>
@@ -30,38 +33,49 @@
 <script>
 export default {
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.registerForm.checkPass !== '') {
+          this.$refs.registerForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.passwordForm.newPassword) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
+      role: '',
       passwordForm: {
         name: '',
-        password: '123456'
+        password: '',
+        newPassword: '',
+        newPasswordAgain: ''
       },
-      loginFormRules: {
+      passwordFormRules: {
         newPassword: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 4, max: 12, message: '长度在 4 到 12 个字符', trigger: 'blur' }
+          { validator: validatePass, trigger: 'blur' }
         ],
         newPasswordAgain: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 4, max: 12, message: '长度在 4 到 12 个字符', trigger: 'blur' }
+          { validator: validatePass2, trigger: 'blur' }
         ]
-      },
-      teachers: [],
-      checked: true
+      }
     }
   },
   mounted() {
-    this.getTeachers()
-    this.getlocalStorage()
+    this.role = this.$route.query.role
   },
   methods: {
     resetForm() {
       this.$router.push('/register')
-    },
-    getTeachers() {
-      var url = '/student/getTeachers'
-      this.$http.get(url).then(result => {
-        this.teachers = result.data.teachers
-      })
     },
     setlocalStorage() {
       localStorage.setItem('name', this.loginForm.username)
@@ -71,28 +85,58 @@ export default {
       this.loginForm.username = localStorage.getItem('name')
       this.loginForm.password = localStorage.getItem('pwd')
     },
-    login() {
-      this.$refs.loginFormRef.validate(async valid => {
-        if (!valid) return
-        await this.$http
-          .post('/teacher/login', this.loginForm)
-          .then(res => {
-            this.$message({
-              message: '登陆成功',
-              type: 'success'
-            })
-            // window.sessionStorage.setItem('user_id', res.data.userId)
-            window.sessionStorage.setItem('name', this.loginForm.username)
-            // this.$router.push('/home')
-          })
-          // eslint-disable-next-line handle-callback-err
-          .catch(err => {
-            this.$message('登录失败')
-          })
-      })
-    },
     changePassword() {
-      this.$router.push('/password')
+      if (this.role === '1') {
+        this.studentCh()
+      } else {
+        this.teacherCh()
+      }
+    },
+    studentCh() {
+      var data = {
+        newPassword: this.passwordForm.newPassword,
+        student: {
+          username: this.passwordForm.name,
+          password: this.passwordForm.password
+        }
+      }
+      this.$http.post('/auth/change', data)
+        .then(res => {
+          this.$message({
+            message: '更改成功',
+            type: 'success'
+          })
+          this.$router.push('/login')
+        })
+        .catch(() => {
+          this.$message({
+            message: '更改失败',
+            type: 'warning'
+          })
+        })
+    },
+    teacherCh() {
+      var data = {
+        newPassword: this.passwordForm.newPassword,
+        teacher: {
+          name: this.passwordForm.name,
+          password: this.passwordForm.password
+        }
+      }
+      this.$http.post('/teacher/password', data)
+        .then(res => {
+          this.$message({
+            message: '更改成功',
+            type: 'success'
+          })
+          this.$router.push('/login')
+        })
+        .catch(() => {
+          this.$message({
+            message: '更改失败',
+            type: 'warning'
+          })
+        })
     }
   }
 }
@@ -100,29 +144,23 @@ export default {
 
 <style lang="less" scoped>
 .login-container {
-  //   background-color: rgb(41, 0, 107);
-  background: -moz-linear-gradient(top, #050505 0%, #e4e4e4 100%);
+  background: -moz-linear-gradient(top, #000f41 0%, #c7d8ff 100%);
   background: -webkit-gradient(
     linear,
     left top,
     left bottom,
-    color-stop(0%, #050505),
-    color-stop(100%, #e4e4e4)
+    color-stop(0%, #000f41),
+    color-stop(100%, #c7d8ff)
   );
-  background: -webkit-linear-gradient(top, #050505 0%, #e4e4e4 100%);
-  background: -o-linear-gradient(top, #050505 0%, #e4e4e4 100%);
-  background: -ms-linear-gradient(top, #050505 0%, #e4e4e4 100%);
-  background: linear-gradient(to bottom, #050505 0%, #e4e4e4 100%);
-  //   background-color: #2b4b6b;
+  background: -webkit-linear-gradient(top, #000f41 0%, #dddddd 100%);
+  background: -o-linear-gradient(top, #000f41 0%, #c7d8ff 100%);
+  background: -ms-linear-gradient(top, #000f41 0%, #c7d8ff 100%);
+  background: linear-gradient(to bottom, #000f41 0%, #c7d8ff 100%);
   height: 100%;
-  //   background-image: url("../assets/starry-sky-1654074_1920.jpg");
-}
-.keep-login {
-  margin-right: 20px;
 }
 .login-box {
   width: 500px;
-  height: 360px;
+  height: 550px;
   position: absolute;
   background-color: #d3d3d3;
   opacity: 0.85;
@@ -152,8 +190,8 @@ export default {
 }
 .title {
   text-align: center;
-  margin-top: 35px;
-  font-size: 40px;
+  margin-top: 32px;
+  font-size: 38px;
   color: rgb(44, 111, 255);
 }
 .login_form {
