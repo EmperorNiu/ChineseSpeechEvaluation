@@ -10,7 +10,13 @@
         <el-button type="text" @click="skip" style="color:white" size="mini">作业选词</el-button>
       </div>
     </div>
+    <div class="top-number">
+      <p class="title-text">语音数据统计</p>
 
+      <p class="title-data">学生数量总计：{{studentNum}}</p>
+      <p class="title-data">音频数量总计：{{audioNum}}</p>
+
+    </div>
     <!-- 身份登录按钮组 -->
     <div class="login-box" v-show="role === '0'">
       <!-- 标题 -->
@@ -116,14 +122,31 @@ export default {
         ]
       },
       teachers: [],
-      checked: true
+      checked: true,
+      studentNum: 0,
+      audioNum: 0
     }
   },
   mounted() {
     this.getTeachers()
     this.getlocalStorage()
+    this.getStudentNumber()
+    this.getAudioNumber()
   },
+
   methods: {
+    getStudentNumber() {
+      var url = '/analysis/getStudentNumber'
+      this.$http.get(url).then(result => {
+        this.studentNum = result.data.count
+      })
+    },
+    getAudioNumber() {
+      var url = '/analysis/getAudioNumber'
+      this.$http.get(url).then(result => {
+        this.audioNum = result.data.count
+      })
+    },
     // 获取老师列表
     getTeachers() {
       var url = '/teacher/getTeachers'
@@ -237,6 +260,14 @@ export default {
   display: flex;
   flex-direction: row;
 }
+.top-number {
+  margin-left: 2%;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  border: 2px dashed;
+  width: 15%;
+}
 .logo {
   width: 42px;
   height: 42px;
@@ -245,6 +276,11 @@ export default {
 .title-text {
   margin-top: 20px;
   margin-left: 15px;
+}
+.title-data {
+  margin-top: 10px;
+  margin-left: 24px;
+  font-size: 14px;
 }
 .skip {
   margin-top: 10px;
