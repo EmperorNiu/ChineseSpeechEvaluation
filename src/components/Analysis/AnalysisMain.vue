@@ -78,7 +78,7 @@
             </el-table-column>
             <el-table-column
               prop="fluency"
-              label="语调准确率">
+              label="流利度">
             </el-table-column>
           </el-table>
           <div class="download-container" v-show="buttonShow">
